@@ -14,18 +14,34 @@ The timeline is organized into several event types:
 - 🟥 **Incident** — controversies, takedowns, clone/copyright events, and other notable disruptions
 - 🔴 **Exploit** — major exploit waves, glitch abuse, leaderboard manipulation, and related enforcement events
 
-Each timeline point opens a modal with a cleaned summary, historical context, and source links where available.
+Each timeline point opens a dark, translucent update panel with categorized patch notes, historical context, update artwork, and source links where available.
 
 ## Features
 
 - Horizontally draggable historical timeline
+- Smooth mouse-wheel scrolling across the timeline
+- Middle-mouse drag scrolling
+- Edge pull / bounce interaction at the ends of the timeline
+- Click-only event opening, so dragging does not accidentally open an update
 - Chronological update and community history
 - Separate visual categories for updates, milestones, incidents, and exploits
+- Dark transparent glass-style update panels
+- Patch notes automatically grouped into sections such as **New content**, **Quests & events**, **Balance & fixes**, and **Other changes**
+- Improved handling of older patch-note formatting so short bullet lines remain attached to the correct section
 - Update-specific artwork stored locally in `GameIcons/`
 - Source-backed event descriptions
-- Mobile-friendly layout
+- Responsive layout with a full-width footer aligned to the main content
 - Animated modal transitions and timeline interactions
+- Mobile-friendly layout
 - GitHub Pages compatible — no framework or build process required
+
+## Timeline controls
+
+- **Left mouse drag** — move left and right through the timeline
+- **Mouse wheel** — smoothly scroll the timeline horizontally
+- **Middle mouse drag** — pan the timeline directly
+- **Click a date or marker** — open that event
+- **Esc / close button** — close the update panel
 
 ## Project structure
 
@@ -41,6 +57,8 @@ BSSHistory/
     └── ...
 ```
 
+The site is intentionally contained in a single `index.html` file with inline HTML, CSS, and JavaScript, making it easy to host directly with GitHub Pages.
+
 ## Sources
 
 Information in the archive is compiled from community-maintained Bee Swarm Simulator wikis, historical patch-note archives, public leaderboard records, Roblox pages, Reddit discussions, videos, and other public community resources.
@@ -49,7 +67,7 @@ The archive is intended as a historical reference. Some older events—especiall
 
 ## Contributing
 
-Corrections, missing historical events, stronger primary sources, and more accurate update artwork are welcome. When adding historical claims, include a public source whenever possible and avoid presenting unverified community claims as confirmed fact.
+Corrections, missing historical events, stronger primary sources, more accurate update artwork, and patch-note formatting fixes are welcome. When adding historical claims, include a public source whenever possible and avoid presenting unverified community claims as confirmed fact.
 
 ## Credits
 
