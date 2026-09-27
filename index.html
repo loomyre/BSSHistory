@@ -2130,6 +2130,24 @@ function edgeLimitInfo(el) {
   let didDrag = false;
   let activeEdge = null;
 
+  // Smooth wheel scrolling state.
+  let targetScroll = el.scrollLeft;
+  let smoothWheelRaf = 0;
+
+  const animateWheelScroll = () => {
+    const distance = targetScroll - el.scrollLeft;
+
+    if (Math.abs(distance) < 0.35) {
+      el.scrollLeft = targetScroll;
+      smoothWheelRaf = 0;
+      return;
+    }
+
+    // Ease toward the target instead of jumping one wheel step at a time.
+    el.scrollLeft += distance * 0.16;
+    smoothWheelRaf = requestAnimationFrame(animateWheelScroll);
+  };
+
   el.addEventListener("mousedown", (e) => {
     // Left-click drag and middle-mouse drag both pan the timeline.
     if (e.button !== 0 && e.button !== 1) return;
@@ -2142,6 +2160,7 @@ function edgeLimitInfo(el) {
     el.classList.add("dragging");
     startX = e.pageX - el.offsetLeft;
     scrollLeft = el.scrollLeft;
+    targetScroll = el.scrollLeft;
 
     // Stop the browser's native middle-click autoscroll so the timeline owns it.
     if (e.button === 1) e.preventDefault();
@@ -2171,6 +2190,7 @@ function edgeLimitInfo(el) {
       const signed = activeEdge === "left" ? pull : -pull;
 
       el.scrollLeft = edge;
+      targetScroll = edge;
       track.style.transform = `translate3d(${signed}px, 0, 0)`;
       return;
     }
@@ -2178,6 +2198,7 @@ function edgeLimitInfo(el) {
     activeEdge = null;
     track.style.transform = "translate3d(0, 0, 0)";
     el.scrollLeft = Math.max(0, Math.min(max, rawTarget));
+    targetScroll = el.scrollLeft;
   });
 
   const endDrag = () => {
@@ -2207,7 +2228,7 @@ function edgeLimitInfo(el) {
   el.addEventListener("mouseleave", endDrag);
   window.addEventListener("mouseup", endDrag);
 
-  // Mouse wheel / middle wheel scrolls the horizontal timeline.
+  // Mouse wheel scrolls the horizontal timeline with eased momentum.
   el.addEventListener("wheel", (e) => {
     const { max } = edgeLimitInfo(el);
     if (max <= 0) return;
@@ -2215,10 +2236,19 @@ function edgeLimitInfo(el) {
     const amount = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
     if (!amount) return;
 
-    const next = Math.max(0, Math.min(max, el.scrollLeft + amount));
-    if (next !== el.scrollLeft) {
+    // Keep accumulating wheel input into a target so quick wheel movements
+    // flow together instead of producing several visible jumps.
+    targetScroll = Math.max(0, Math.min(max, targetScroll + amount * 1.08));
+
+    const movingTowardTimeline =
+      (amount > 0 && targetScroll > el.scrollLeft) ||
+      (amount < 0 && targetScroll < el.scrollLeft);
+
+    if (movingTowardTimeline || Math.abs(targetScroll - el.scrollLeft) > 0.5) {
       e.preventDefault();
-      el.scrollLeft = next;
+      if (!smoothWheelRaf) {
+        smoothWheelRaf = requestAnimationFrame(animateWheelScroll);
+      }
     }
   }, { passive: false });
 
