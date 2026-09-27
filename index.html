@@ -862,6 +862,131 @@
       scroll-behavior: auto !important;
     }
   }
+
+  /* Dark transparent update modal — ChatGPT */
+  .overlay {
+    background: rgba(0, 0, 0, .52);
+    backdrop-filter: blur(12px) saturate(.9);
+  }
+
+  .modal {
+    color: rgba(255,255,255,.92);
+    background:
+      linear-gradient(145deg, rgba(255,255,255,.055), rgba(255,255,255,.012)),
+      rgba(4, 7, 11, .76);
+    border-color: rgba(255,255,255,.12);
+    box-shadow:
+      0 -24px 80px rgba(0,0,0,.62),
+      inset 0 1px 0 rgba(255,255,255,.09);
+    backdrop-filter: blur(30px) saturate(1.12);
+  }
+
+  .modal::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,.16);
+  }
+
+  .modal-head {
+    background: rgba(5, 8, 12, .62);
+    border-bottom-color: rgba(255,255,255,.08);
+    backdrop-filter: blur(30px) saturate(1.12);
+  }
+
+  .modal-art-wrap {
+    background: rgba(255,255,255,.055);
+    border-color: rgba(255,255,255,.10);
+    box-shadow:
+      0 12px 32px rgba(0,0,0,.32),
+      inset 0 1px 0 rgba(255,255,255,.08);
+  }
+
+  .modal-art-wrap::after {
+    background: linear-gradient(145deg, rgba(255,255,255,.10), transparent 48%, rgba(0,0,0,.18));
+  }
+
+  .modal-date {
+    color: rgba(255,255,255,.52);
+  }
+
+  .modal-title {
+    color: #f7f9fc;
+  }
+
+  .modal-close {
+    border-color: rgba(255,255,255,.10);
+    background: rgba(255,255,255,.055);
+    color: rgba(255,255,255,.78);
+    box-shadow: 0 5px 18px rgba(0,0,0,.20);
+  }
+
+  .modal-close:hover {
+    background: rgba(255,255,255,.11);
+  }
+
+  .modal-badge {
+    border-color: rgba(101,184,255,.26);
+    background: rgba(101,184,255,.10);
+    color: #9ad2ff;
+  }
+
+  .modal-badge.update {
+    border-color: rgba(245,185,66,.24);
+    background: rgba(245,185,66,.10);
+    color: #ffd874;
+  }
+
+  .modal-badge.community {
+    border-color: rgba(182,140,255,.26);
+    background: rgba(182,140,255,.10);
+    color: #d8c2ff;
+  }
+
+  .modal-badge.incident {
+    border-color: rgba(239,127,134,.27);
+    background: rgba(239,127,134,.10);
+    color: #ffc1c6;
+  }
+
+  .modal-badge.exploit {
+    border-color: rgba(217,59,70,.30);
+    background: rgba(217,59,70,.12);
+    color: #ff8f98;
+  }
+
+  .patch-section {
+    border-color: rgba(255,255,255,.075);
+    background: rgba(255,255,255,.045);
+    box-shadow:
+      0 8px 30px rgba(0,0,0,.16),
+      inset 0 1px 0 rgba(255,255,255,.025);
+  }
+
+  .patch-heading,
+  .patch-entry-title {
+    color: rgba(255,255,255,.90);
+  }
+
+  .patch-simple-list,
+  .patch-entry-body,
+  .patch-entry-bullets,
+  .patch-details,
+  .patch-bullets {
+    color: rgba(225,233,243,.68);
+  }
+
+  .patch-entry {
+    background: rgba(255,255,255,.035);
+    border-color: rgba(255,255,255,.06);
+  }
+
+  .source-note {
+    color: rgba(255,255,255,.38);
+    border-top-color: rgba(255,255,255,.07);
+  }
+
+  .source-note a {
+    color: #65b8ff;
+  }
+
 </style>
 </head>
 <body>
