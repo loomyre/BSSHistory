@@ -540,21 +540,73 @@ nextPreview.addEventListener("click", () => browseUpdate(1));
 prevEvent.addEventListener("click", () => browseUpdate(-1));
 nextEvent.addEventListener("click", () => browseUpdate(1));
 
-let swipeStart = null;
+let taskGesture = null;
+let suppressTaskClick = false;
+let taskSettleTimer = 0;
+
+function settleTaskStage() {
+  taskStage.classList.add("is-settling");
+  taskStage.style.transform = "translate3d(0, 0, 0)";
+  clearTimeout(taskSettleTimer);
+  taskSettleTimer = setTimeout(() => taskStage.classList.remove("is-settling"), 300);
+}
+
 taskStage.addEventListener("pointerdown", (e) => {
-  if (e.pointerType === "touch") swipeStart = { x: e.clientX, y: e.clientY, id: e.pointerId };
+  if (e.button !== 0 || !overlay.classList.contains("open")) return;
+  if (e.target.closest?.("a, input, select, textarea, [contenteditable]")) return;
+
+  const matrix = getComputedStyle(taskStage).transform;
+  const currentX = matrix === "none" ? 0 : (new DOMMatrixReadOnly(matrix).m41 || 0);
+  clearTimeout(taskSettleTimer);
+  taskStage.classList.remove("is-settling");
+  taskStage.style.transform = `translate3d(${currentX}px, 0, 0)`;
+  taskGesture = { id: e.pointerId, x: e.clientX, y: e.clientY, offset: currentX, dragging: false };
 });
-taskStage.addEventListener("pointerup", (e) => {
-  if (!swipeStart || swipeStart.id !== e.pointerId) return;
-  const dx = e.clientX - swipeStart.x;
-  const dy = e.clientY - swipeStart.y;
-  swipeStart = null;
-  if (Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.3) {
-    e.preventDefault();
-    browseUpdate(dx < 0 ? 1 : -1);
+
+taskStage.addEventListener("pointermove", (e) => {
+  if (!taskGesture || taskGesture.id !== e.pointerId) return;
+  const dx = e.clientX - taskGesture.x;
+  const dy = e.clientY - taskGesture.y;
+
+  if (!taskGesture.dragging) {
+    if (Math.abs(dy) > 10 && Math.abs(dy) > Math.abs(dx)) {
+      taskGesture = null; // keep native vertical reading/scrolling
+      settleTaskStage();
+      return;
+    }
+    if (Math.abs(dx) < 10 || Math.abs(dx) < Math.abs(dy) * 1.15) return;
+    taskGesture.dragging = true;
+    taskStage.classList.add("is-dragging");
+    try { taskStage.setPointerCapture(e.pointerId); } catch {}
+    window.getSelection()?.removeAllRanges();
   }
+
+  e.preventDefault();
+  const travel = Math.max(-170, Math.min(170, taskGesture.offset + dx * .8));
+  taskStage.style.transform = `translate3d(${travel}px, 0, 0)`;
 });
-taskStage.addEventListener("pointercancel", () => { swipeStart = null; });
+
+function endTaskGesture(e, cancelled = false) {
+  if (!taskGesture || taskGesture.id !== e.pointerId) return;
+  const { dragging, x } = taskGesture;
+  taskGesture = null;
+  taskStage.classList.remove("is-dragging");
+  if (dragging) {
+    suppressTaskClick = true;
+    setTimeout(() => { suppressTaskClick = false; }, 0);
+    const dx = e.clientX - x;
+    if (!cancelled && Math.abs(dx) > 70) browseUpdate(dx < 0 ? 1 : -1);
+  }
+  settleTaskStage();
+}
+
+taskStage.addEventListener("pointerup", (e) => endTaskGesture(e));
+taskStage.addEventListener("pointercancel", (e) => endTaskGesture(e, true));
+taskStage.addEventListener("click", (e) => {
+  if (!suppressTaskClick) return;
+  e.preventDefault();
+  e.stopPropagation();
+}, true);
 document.addEventListener("keydown", (e) => {
   if (!overlay.classList.contains("open")) return;
 

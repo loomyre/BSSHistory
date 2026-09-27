@@ -37,7 +37,7 @@ Each timeline point opens a recent-apps-inspired update viewer with a centered r
 
 ## Update viewer controls
 
-- **Desktop:** click a neighboring card, use the arrow buttons, or press the left/right arrow keys
+- **Desktop:** click and drag the update cards, click a neighboring card, use the arrow buttons, or press the left/right arrow keys
 - **Touchscreen:** swipe horizontally to switch updates; scroll vertically inside the selected card to read
 - **Close:** use the ✕ button, click outside the viewer, or press Escape
 

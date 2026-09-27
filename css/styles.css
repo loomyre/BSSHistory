@@ -1083,7 +1083,9 @@ a {
 }
 
 .task-view {
-  --task-card-width: min(760px, calc(100vw - 128px));
+  --task-card-width: min(1000px, calc(100vw - 160px));
+  --task-peek-width: 340px;
+  --task-peek-visible: clamp(48px, 6vw, 90px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1151,14 +1153,32 @@ a {
   display: flex;
   align-items: center;
   align-self: center;
-  gap: 16px;
+  gap: 0;
   width: max-content;
   min-height: 0;
   flex: 1 1 auto;
   touch-action: pan-y;
+  will-change: transform;
+}
+
+.task-stage.is-settling {
+  transition: transform .28s cubic-bezier(.2,.8,.2,1);
+}
+.task-stage.is-dragging {
+  cursor: grabbing;
+  user-select: none;
+  -webkit-user-select: none;
+}
+.task-peek--prev {
+  margin-right: calc(var(--task-peek-visible) - var(--task-peek-width));
+}
+.task-peek--next {
+  margin-left: calc(var(--task-peek-visible) - var(--task-peek-width));
 }
 
 .task-stage .modal {
+  position: relative;
+  z-index: 3;
   flex: none;
   width: var(--task-card-width);
   height: 100%;
@@ -1182,11 +1202,13 @@ a {
 .task-stage .modal-body { padding: 24px 28px 36px; }
 
 .task-peek {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex: none;
   flex-direction: column;
   align-items: flex-start;
-  width: 220px;
+  width: var(--task-peek-width);
   height: 93%;
   padding: 20px;
   overflow: hidden;
@@ -1283,7 +1305,9 @@ a {
     padding: max(8px, env(safe-area-inset-top)) 0 max(8px, env(safe-area-inset-bottom));
   }
   .task-view {
-    --task-card-width: calc(100vw - 72px);
+    --task-card-width: calc(100vw - 76px);
+    --task-peek-width: 160px;
+    --task-peek-visible: 38px;
     gap: 8px;
     height: calc(100dvh - max(8px, env(safe-area-inset-top)) - max(8px, env(safe-area-inset-bottom)));
   }
@@ -1292,14 +1316,14 @@ a {
   .task-identity img { width: 36px; height: 36px; border-radius: 11px; }
   .task-identity small { font-size: 10px; }
   .task-topbar .modal-close { width: 38px; height: 38px; }
-  .task-stage { gap: 12px; }
+  .task-stage { gap: 0; }
   .task-stage .modal { border-radius: 27px; }
   .task-stage .modal-head { padding: 18px; }
   .task-stage .modal-hero { grid-template-columns: 64px minmax(0,1fr); gap: 12px; }
   .task-stage .modal-art-wrap { width: 64px; border-radius: 16px; }
   .task-stage .modal-title { font-size: clamp(20px, 6vw, 27px); }
   .task-stage .modal-body { padding: 19px 18px 26px; }
-  .task-peek { width: 160px; padding: 15px; border-radius: 25px; }
+  .task-peek { padding: 15px; border-radius: 25px; }
   .task-peek-title { font-size: 17px; }
   .task-controls { gap: 16px; }
 }
