@@ -1665,47 +1665,35 @@ function setModalOrigin(originEl) {
   modal.style.setProperty("--modal-y", `${y}px`);
 }
 
-function artworkTheme(ev) {
-  const haystack = `${ev.title || ""} ${ev.label || ""} ${ev.date || ""}`.toLowerCase();
-  if (ev.type === "community") return { a: "#8b5cf6", b: "#4f46e5", label: "COMMUNITY", motif: "trophy" };
-  if (/beesmas|bee bear|festive|winter/.test(haystack)) return { a: "#7dd3fc", b: "#2563eb", label: "BEESMAS", motif: "snow" };
-  if (/robo bear|robo challenge|digital bee/.test(haystack)) return { a: "#94a3b8", b: "#334155", label: "ROBO", motif: "gear" };
-  if (/sticker|hive hub|trading/.test(haystack)) return { a: "#f9a8d4", b: "#a855f7", label: "STICKERS", motif: "spark" };
-  if (/retro swarm|classic event/.test(haystack)) return { a: "#86efac", b: "#15803d", label: "RETRO", motif: "pixel" };
-  if (/windy|coconut|spirit bear|petal/.test(haystack)) return { a: "#bae6fd", b: "#0284c7", label: "WIND & PETAL", motif: "wind" };
-  if (/gifted|ant challenge|bee level/.test(haystack)) return { a: "#fde68a", b: "#d97706", label: "BEE SYSTEMS", motif: "star" };
-  return { a: "#fbbf24", b: "#b45309", label: ev.era ? "MAJOR UPDATE" : "UPDATE", motif: "bee" };
-}
+const DEFAULT_GAME_ART = "GameIcons/BSSGamesIcon.webp";
 
-function makeArtworkDataUri(ev) {
-  const t = artworkTheme(ev);
-  const year = escapeHtml(ev.year || (ev.date || "").slice(0, 4));
-
-  const motifs = {
-    bee: `<g transform="translate(50 42)"><ellipse cx="0" cy="5" rx="20" ry="14" fill="#facc15"/><rect x="-11" y="-7" width="6" height="24" rx="3" fill="#2b2118"/><rect x="4" y="-7" width="6" height="24" rx="3" fill="#2b2118"/><ellipse cx="-13" cy="-9" rx="11" ry="7" fill="#fff" fill-opacity=".76" transform="rotate(-25 -13 -9)"/><ellipse cx="13" cy="-9" rx="11" ry="7" fill="#fff" fill-opacity=".76" transform="rotate(25 13 -9)"/><circle cx="-6" cy="2" r="2.2" fill="#20180f"/><circle cx="6" cy="2" r="2.2" fill="#20180f"/></g>`,
-    snow: `<g fill="#fff" fill-opacity=".9" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M50 22v40M30 42h40M36 28l28 28M64 28L36 56"/><circle cx="50" cy="42" r="5" fill="none"/></g>`,
-    gear: `<g transform="translate(50 42)" fill="none" stroke="#fff" stroke-width="6"><circle r="18"/><circle r="6"/><path d="M0-29v10M0 19v10M-29 0h10M19 0h10M-21-21l7 7M14 14l7 7M21-21l-7 7M-14 14l-7 7"/></g>`,
-    spark: `<g fill="#fff"><path d="M50 18l6 16 16 6-16 6-6 16-6-16-16-6 16-6z"/><circle cx="26" cy="24" r="5" fill-opacity=".72"/><circle cx="74" cy="58" r="4" fill-opacity=".72"/></g>`,
-    pixel: `<g fill="#fff"><rect x="27" y="20" width="14" height="14"/><rect x="43" y="36" width="14" height="14"/><rect x="59" y="20" width="14" height="14"/><rect x="27" y="52" width="14" height="14"/><rect x="59" y="52" width="14" height="14"/></g>`,
-    wind: `<g fill="none" stroke="#fff" stroke-width="5" stroke-linecap="round"><path d="M22 34h39c11 0 12-14 2-14-5 0-8 3-9 7"/><path d="M18 46h50c12 0 12 15 1 15-5 0-8-3-9-7"/><path d="M28 57h23"/></g>`,
-    star: `<g fill="#fff"><path d="M50 17l7.5 15.5 17.1 2.5-12.3 12 2.9 17L50 56l-15.2 8 2.9-17-12.3-12 17.1-2.5z"/><circle cx="50" cy="42" r="9" fill-opacity=".28"/></g>`,
-    trophy: `<g fill="#fff"><path d="M36 20h28v15c0 12-6 20-14 22v7h12v7H38v-7h12v-7c-8-2-14-10-14-22z"/><path d="M34 24H23v8c0 9 6 15 15 16v-7c-5-1-8-4-8-9v-2h4zm32 0h11v8c0 9-6 15-15 16v-7c5-1 8-4 8-9v-2h-4z" fill-opacity=".76"/></g>`
-  };
-
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="208" height="208" viewBox="0 0 100 100">
-    <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="${t.a}"/><stop offset="1" stop-color="${t.b}"/></linearGradient></defs>
-    <rect width="100" height="100" rx="22" fill="url(#g)"/>
-    <g opacity=".12" fill="#fff"><path d="M0 18h100v2H0zM0 80h100v2H0z"/><circle cx="15" cy="15" r="10"/><circle cx="88" cy="76" r="18"/></g>
-    ${motifs[t.motif] || motifs.bee}
-    <rect x="8" y="76" width="84" height="16" rx="8" fill="#0b1220" fill-opacity=".22"/>
-    <text x="50" y="83" fill="#fff" font-size="6.2" font-family="Arial, sans-serif" font-weight="800" text-anchor="middle" letter-spacing=".7">${t.label}</text>
-    <text x="50" y="89" fill="#fff" fill-opacity=".82" font-size="4.8" font-family="Arial, sans-serif" font-weight="700" text-anchor="middle">${year}</text>
-  </svg>`;
-  return `data:image/svg+xml;charset=UTF-8,${encodeURIComponent(svg)}`;
-}
+// Original artwork stored alongside this site in the GitHub repository.
+// Dates without a dedicated historical thumbnail intentionally fall back to
+// the main Bee Swarm Simulator game icon instead of generated artwork.
+const UPDATE_ARTWORK = {
+  "2018-04-10": "GameIcons/BeeSwarmActualFirstIcon.webp",
+  "2018-04-27": "GameIcons/BeeSwarmActualFirstIcon.webp",
+  "2018-05-12": "GameIcons/TabbyUpdateIcon.webp",
+  "2018-05-26": "GameIcons/BSSGummyInvasionUpdate.webp",
+  "2018-07-11": "GameIcons/BSSMotherBearUpdate.webp",
+  "2018-09-10": "GameIcons/NighttimeUpdateIcon.webp",
+  "2018-12-19": "GameIcons/BSSIconJan19.webp",
+  "2018-12-25": "GameIcons/BSSIconJan19.webp",
+  "2019-04-17": "GameIcons/BSSEggHunt2019Update.webp",
+  "2019-09-27": "GameIcons/Windycover.webp",
+  "2019-12-22": "GameIcons/Bssbeesmas2019cover.webp",
+  "2020-04-07": "GameIcons/Beeswarmegghuntlogo.webp",
+  "2022-12-26": "GameIcons/BSSRoboBearUpdateThumb.webp",
+  "2022-12-30": "GameIcons/BSSRoboBearUpdate2xThumb.webp",
+  "2024-01-13": "GameIcons/BSSStickerUpdateIcon.webp",
+  "2024-01-17": "GameIcons/BSSStickerUpdate2xIcon.webp",
+  "2024-05-24": "GameIcons/BSSClassicIcon.webp",
+  "2025-12-26": "GameIcons/BSSBeesmas20252xEvent.webp"
+};
 
 function getEventArtwork(ev) {
-  return makeArtworkDataUri(ev);
+  if (ev.type === "community") return DEFAULT_GAME_ART;
+  return UPDATE_ARTWORK[ev.date] || DEFAULT_GAME_ART;
 }
 
 function openModal(ev, originEl) {
@@ -1715,7 +1703,10 @@ function openModal(ev, originEl) {
   modalBadge.textContent = ev.type === "community" ? "Community Milestone" : (ev.era ? "Major Update" : "Update");
   modalBadge.className = "modal-badge" + (ev.type === "community" ? " community" : (ev.era ? "" : " update"));
   modalTitle.textContent = ev.title;
-  modalArt.onerror = null;
+  modalArt.onerror = () => {
+    modalArt.onerror = null;
+    modalArt.src = DEFAULT_GAME_ART;
+  };
   modalArt.src = getEventArtwork(ev);
   modalArt.alt = `${ev.title} update artwork`;
 
