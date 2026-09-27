@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Bee Swarm Simulator — Update Timeline</title>
+<title>Bee Swarm Simulator History Archive</title>
 <style>
   :root {
     --bg: #090d14;
@@ -22,6 +22,10 @@
     --green: #79c89c;
     --community: #b68cff;
     --community-2: #d8c2ff;
+    --incident: #ef7f86;
+    --incident-2: #ffc1c6;
+    --exploit: #d93b46;
+    --exploit-2: #ff8f98;
     --wax: #f5b942;
     --border: rgba(164, 190, 222, .12);
     --border-strong: rgba(164, 190, 222, .20);
@@ -341,7 +345,7 @@
     letter-spacing: .09em;
     text-transform: uppercase;
   }
-  .stop:not(.era):not(.community) .stop-tag {
+  .stop:not(.era):not(.community):not(.incident):not(.exploit) .stop-tag {
     border-color: rgba(245,185,66,.16);
     background: rgba(245,185,66,.06);
     color: var(--honey-2);
@@ -362,6 +366,40 @@
   .stop.community:hover .stop-marker,
   .stop.community:focus-visible .stop-marker {
     box-shadow: 0 0 0 8px rgba(182,140,255,.12), 0 9px 30px rgba(182,140,255,.24);
+  }
+
+  .stop.incident .stop-marker {
+    width: 31px;
+    height: 14px;
+    background: linear-gradient(180deg, var(--incident-2), var(--incident));
+    box-shadow: 0 0 0 5px rgba(239,127,134,.11), 0 8px 24px rgba(239,127,134,.16);
+  }
+  .stop.incident .stop-date { color: var(--incident-2); }
+  .stop.incident .stop-tag {
+    border-color: rgba(239,127,134,.24);
+    background: rgba(239,127,134,.09);
+    color: #ffd9dd;
+  }
+  .stop.incident:hover .stop-marker,
+  .stop.incident:focus-visible .stop-marker {
+    box-shadow: 0 0 0 8px rgba(239,127,134,.13), 0 9px 30px rgba(239,127,134,.27);
+  }
+
+  .stop.exploit .stop-marker {
+    width: 31px;
+    height: 14px;
+    background: linear-gradient(180deg, var(--exploit-2), var(--exploit));
+    box-shadow: 0 0 0 5px rgba(217,59,70,.12), 0 8px 24px rgba(217,59,70,.18);
+  }
+  .stop.exploit .stop-date { color: var(--exploit-2); }
+  .stop.exploit .stop-tag {
+    border-color: rgba(217,59,70,.26);
+    background: rgba(217,59,70,.11);
+    color: #ffd4d7;
+  }
+  .stop.exploit:hover .stop-marker,
+  .stop.exploit:focus-visible .stop-marker {
+    box-shadow: 0 0 0 8px rgba(217,59,70,.14), 0 9px 30px rgba(217,59,70,.29);
   }
 
   .hint {
@@ -499,6 +537,16 @@
     background: rgba(154,112,219,.11);
     color: #68439b;
   }
+  .modal-badge.incident {
+    border-color: rgba(212,94,103,.20);
+    background: rgba(239,127,134,.11);
+    color: #a1454d;
+  }
+  .modal-badge.exploit {
+    border-color: rgba(190,52,62,.20);
+    background: rgba(217,59,70,.11);
+    color: #9d2630;
+  }
 
   .modal-title {
     margin: 0;
@@ -574,6 +622,14 @@
   .patch-section.category-community .patch-heading::before {
     background: linear-gradient(135deg, #d7c0ff, #9c6de3);
     box-shadow: 0 0 0 4px rgba(156,109,227,.11);
+  }
+  .patch-section.category-incident .patch-heading::before {
+    background: linear-gradient(135deg, #ffc1c6, #ef7f86);
+    box-shadow: 0 0 0 4px rgba(239,127,134,.11);
+  }
+  .patch-section.category-exploit .patch-heading::before {
+    background: linear-gradient(135deg, #ff8f98, #d93b46);
+    box-shadow: 0 0 0 4px rgba(217,59,70,.11);
   }
   .patch-section.category-new .patch-heading::before {
     background: linear-gradient(135deg, #f1b84d, #d88d21);
@@ -811,15 +867,17 @@
 <body>
 <div class="wrap">
   <header>
-    <p class="kicker">🐝 Bee Swarm Simulator history archive</p>
-    <h1>Bee Swarm Simulator: <span class="title-tail">A Timeline of Updates</span></h1>
-    <p class="sub">Follow Bee Swarm Simulator from its earliest updates to major community records and milestones. Open any point on the timeline for a cleaned, source-backed breakdown.</p>
+    <p class="kicker">🐝 Bee Swarm Simulator historical archive</p>
+    <h1>Bee Swarm Simulator: <span class="title-tail">History Archive</span></h1>
+    <p class="sub">Explore Bee Swarm Simulator history from its earliest patches to major updates, community records, exploit waves, controversies, and other notable events. Open any point on the timeline for a concise, source-backed breakdown.</p>
   </header>
 
   <div class="legend">
     <span><span class="swatch" style="background:var(--blue)"></span> Major update</span>
     <span><span class="swatch" style="background:var(--wax)"></span> Update / patch</span>
     <span><span class="swatch" style="background:var(--community)"></span> Community milestone</span>
+    <span><span class="swatch" style="background:var(--incident)"></span> Incident</span>
+    <span><span class="swatch" style="background:var(--exploit)"></span> Exploit</span>
   </div>
 
   <div class="track-shell">
@@ -830,7 +888,7 @@
   <p class="hint">← scroll or drag to explore the full trail →</p>
 
   <footer>
-    <p class="footer-title">Bee Swarm Simulator resources</p>
+    <p class="footer-title">Bee Swarm Simulator History Archive</p>
     <nav class="footer-links" aria-label="Bee Swarm Simulator resources">
       <a href="https://www.roblox.com/games/1537690962/Bee-Swarm-Simulator" target="_blank" rel="noopener">Play on Roblox</a>
       <a href="https://www.roblox.com/groups/3982592" target="_blank" rel="noopener">BSS Club</a>
@@ -885,8 +943,12 @@ const EVENTS = [
     "label": "First patch",
     "era": false,
     "title": "April 10, 2018",
-    "sourceHtml": "<ul class=\"source-list\"><li>Add bee slot</li></ul><ul class=\"source-list\"><li>20 black bear quests (diamond egg quests)</li></ul><ul class=\"source-list\"><li>add hat</li></ul>",
-    "sourceHref": "https://en.namu.wiki/w/Bee%20Swarm%20Simulator/%ED%8C%A8%EC%B9%98%EB%85%B8%ED%8A%B8#s-2.1"
+    "sourceHtml": "<ul class=\"source-list\"><li>20 new Black Bear quests associated with the Diamond Egg questline</li><li>Hive expansions: purchasable Hive Slots were added</li><li>Hats were introduced, including the Beekeeper's Mask in the Mountain Top Shop</li><li>General bug fixes</li></ul><p>This was the first documented post-release content patch in the community update archive. The original NamuWiki summary is very short, but the Bee Swarm Simulator community update history separately lists bug fixes, 20 Black Bear quests, hive expansions, and hats for April 10, 2018.</p><p>The Mountain Top Shop history also records that the shop originally sold only the Glider at release, then gained the Beekeeper's Mask and Hive Slots in this update.</p>",
+    "sourceHref": "https://en.namu.wiki/w/Bee%20Swarm%20Simulator/%ED%8C%A8%EC%B9%98%EB%85%B8%ED%8A%B8#s-2.1",
+    "extraSources": [
+      {"href":"https://bee-swarm-simulator.fandom.com/wiki/Updates?page=2","label":"Community update archive — April 10, 2018"},
+      {"href":"https://bee-swarm-simulator.fandom.com/wiki/Mountain_Top_Shop","label":"Mountain Top Shop history"}
+    ]
   },
   {
     "date": "2018-04-27",
@@ -1327,7 +1389,6 @@ const COMMUNITY_MILESTONES = [
   {date:"2021-11-28",year:"2021",type:"community",label:"BSS Club reaches 10M",title:"Bee Swarm Simulator Club reaches 10 million members",sourceHref:"https://bee-swarm-simulator.fandom.com/wiki/Bee_Swarm_Simulator",sourceHtml:`<ul class="source-list"><li>10 million club members</li></ul><p>The official Bee Swarm Simulator Club crossed 10 million members.</p>`},
   {date:"2022-02-27",year:"2022",type:"community",label:"1Qd honey in one day",title:"OnettsStepSis makes 1 quadrillion honey in a single day",sourceHref:"https://bee-swarm-simulator.fandom.com/wiki/All-Time_Top_Honeymakers",sourceHtml:`<ul class="source-list"><li>First recorded 1 quadrillion-honey day</li></ul><p>OnettsStepSis pushed the legitimate single-day record to 1 quadrillion honey.</p>`},
   {date:"2022-03-01",year:"2022",type:"community",label:"e_lol reaches 10Qd",title:"e_lol reaches 10 quadrillion total honey",sourceHref:"https://bee-swarm-simulator.fandom.com/wiki/All-Time_Top_Honeymakers",sourceHtml:`<ul class="source-list"><li>First 10 quadrillion total honey</li></ul><p>e_lol became the first recorded player to reach 10 quadrillion total honey.</p>`},
-  {date:"2022-03-13",year:"2022",type:"community",label:"9.2Qn exploit incident",title:"Exploiters hit the leaderboard's 64-bit honey limit",sourceHref:"https://bee-swarm-simulator.fandom.com/wiki/All-Time_Top_Honeymakers",sourceHtml:`<ul class="source-list"><li>Major leaderboard exploit incident</li></ul><p>Six exploiters appeared on the leaderboard with totals from 22 quadrillion to roughly 9.2 quintillion. Three were near the 64-bit integer limit; the illegitimate entries were later removed.</p>`},
   {date:"2022-09-04",year:"2022",type:"community",label:"2 billion visits",title:"Bee Swarm Simulator reaches 2 billion visits",sourceHref:"https://bee-swarm-simulator.fandom.com/wiki/Bee_Swarm_Simulator",sourceHtml:`<ul class="source-list"><li>2 billion visits</li></ul><p>The game reached 2 billion visits.</p>`},
   {date:"2022-10-05",year:"2022",type:"community",label:"2Qd honey in one day",title:"FragileSilence makes 2 quadrillion honey in a single day",sourceHref:"https://bee-swarm-simulator.fandom.com/wiki/All-Time_Top_Honeymakers",sourceHtml:`<ul class="source-list"><li>2 quadrillion-honey day</li></ul><p>FragileSilence doubled the previous recorded legitimate single-day milestone to 2 quadrillion honey.</p>`},
   {date:"2023-03-29",year:"2023",type:"community",label:"e_lol: one year at #1",title:"e_lol becomes the first player to hold #1 for an entire year",sourceHref:"https://bee-swarm-simulator.fandom.com/wiki/All-Time_Top_Honeymakers",sourceHtml:`<ul class="source-list"><li>One full year at #1</li></ul><p>e_lol became the first player documented as holding the #1 All-Time Top Honeymakers position continuously for a full year.</p>`},
@@ -1345,8 +1406,95 @@ const COMMUNITY_MILESTONES = [
   {date:"2026-02-28",year:"2026",type:"community",label:"ruiream becomes #1",title:"ruiream ends FragileSilence's record #1 reign",sourceHref:"https://bee-swarm-simulator.fandom.com/wiki/All-Time_Top_Honeymakers",sourceHtml:`<ul class="source-list"><li>New #1 All-Time Top Honeymaker</li></ul><p>ruiream surpassed FragileSilence, ending a #1 reign of 1 year, 11 months, and 2 days—the longest documented reign at the time.</p>`}
 ];
 
-const TIMELINE_EVENTS = [...EVENTS, ...COMMUNITY_MILESTONES]
-  .sort((a, b) => a.date.localeCompare(b.date) || (a.type === "community" ? 1 : -1));
+
+const EXPLOIT_INCIDENTS = [
+  {
+    date:"2018-10-09", year:"2018", type:"incident",
+    label:"Mayrushart reset",
+    title:"Mayrushart cheating controversy and progress reset",
+    sourceHref:"https://bee-swarm-simulator.fandom.com/f/p/3100000000000002463",
+    extraSources:[
+      {href:"https://bee-swarm-simulator.fandom.com/f/p/3100000000000002479/r/3087477846919446424", label:"Contemporary community discussion"}
+    ],
+    sourceHtml:`<ul class="source-list"><li>Account involved: mayrushart</li><li>Impact: progress reset and leaderboard removal</li></ul><p>Contemporary Bee Swarm Simulator community posts documented mayrushart losing progress after being caught cheating and disappearing from the honeymaker leaderboard.</p><p>Community discussion at the time alleged use of duplication and other exploit scripts. The surviving sources are community reports rather than an authoritative technical post from Onett, so the exact exploit mechanics are not treated here as confirmed.</p>`
+  },
+  {
+    date:"2020-06-09", year:"2020", type:"incident",
+    label:"Beekeepers! takedown",
+    title:"Beekeepers! is taken down after a Bee Swarm copyright dispute",
+    sourceHref:"https://roblox.fandom.com/wiki/Beekeepers_Official/Beekeepers!",
+    extraSources:[
+      {href:"https://www.reddit.com/r/BeeSwarmSimulator/comments/k8ut0d/", label:"December 2020 community discussion"}
+    ],
+    sourceHtml:`<ul class="source-list"><li>Game involved: Beekeepers!</li><li>What it was: a Roblox bee-collecting simulator heavily inspired by Bee Swarm Simulator</li><li>June 9, 2020: the original game was removed following a copyright complaint connected to Bee Swarm Simulator</li><li>December 5, 2020: a substantially revamped version returned</li></ul><p>Beekeepers! became one of the earliest major BSS-like games to trigger a public copyright dispute. Roblox-community documentation says the first version was deleted on June 9, 2020 because of a copyright complaint from Onett, after which its developers spent roughly six months rebuilding it.</p><p>The revamped version launched on December 5, 2020. It was removed again on December 10, but the Beekeepers! developers later said that second removal was not caused by Onett; community documentation attributes it to a separate false copyright claim. Because Beekeepers! used its own assets and changed systems over time, this entry treats it as a major BSS-inspired clone dispute rather than an exact 1:1 copy.</p>`
+  },
+  {
+    date:"2021-02-27", year:"2021", type:"exploit",
+    label:"Gifted_Ty glitch ban",
+    title:"Gifted_Ty removed from the leaderboard for glitch abuse",
+    sourceHref:"https://bee-swarm-simulator.fandom.com/wiki/All-Time_Top_Honeymakers",
+    extraSources:[
+      {href:"https://www.reddit.com/r/BeeSwarmSimulator/comments/lty4sm/", label:"Community discussion from February 27, 2021"}
+    ],
+    sourceHtml:`<ul class="source-list"><li>Account involved: Gifted_Ty</li><li>Abused system: save-data / RNG manipulation</li><li>Impact: removed from the All-Time Top Honeymakers leaderboard</li></ul><p>The community-maintained leaderboard history records Gifted_Ty being blocked from the leaderboard for abusing glitches. Contemporary discussion described the abuse as deliberately manipulating save-data loss so unfavorable random outcomes, including Wind Shrine outcomes, could be retried.</p><p>The removal returned e_lol to the #1 position at the time. This entry describes the documented effect at a high level and intentionally omits reproduction steps.</p>`
+  },
+  {
+    date:"2022-03-03", year:"2022", type:"exploit",
+    label:"Wind Shrine exploit wave",
+    title:"Infinite-honey exploiters overwhelm the honeymaker leaderboard",
+    sourceHref:"https://bee-swarm-simulator.fandom.com/wiki/All-Time_Top_Honeymakers",
+    extraSources:[
+      {href:"https://www.reddit.com/r/BeeSwarmSimulator/comments/t6c52c/", label:"March 2022 community discussion"}
+    ],
+    sourceHtml:`<ul class="source-list"><li>Accounts documented: moivnvodich, 123404az, ProSupHeo, Grete_HD and others</li><li>Abused system: an old infinite-honey exploit associated with the Wind Shrine</li><li>Impact: impossible honey totals and repeated leaderboard removals</li></ul><p>On March 3, the account moivnvodich appeared with roughly 2.5 quintillion honey. The leaderboard history says the account was reset and banned the next day; an interview cited there described two users behind the account modifying an older infinite-honey exploit involving the Wind Shrine.</p><p>The incident expanded into a wider wave. On March 11, 123404az reached about 9.2 quintillion, ProSupHeo about 2.4 quintillion, and Grete_HD about 550 quadrillion. More exploit accounts appeared on March 13 and 14, with several totals near the signed 64-bit integer limit. The illegitimate entries were subsequently removed.</p>`
+  },
+  {
+    date:"2022-12-29", year:"2022", type:"exploit",
+    label:"Beesmas exploit wave",
+    title:"Another exploit wave floods the honeymaker leaderboard",
+    sourceHref:"https://bee-swarm-simulator.fandom.com/wiki/All-Time_Top_Honeymakers",
+    extraSources:[
+      {href:"https://www.reddit.com/r/BeeSwarmSimulator/comments/zyby5b/", label:"December 29, 2022 community report"}
+    ],
+    sourceHtml:`<ul class="source-list"><li>Accounts documented: BuyKocmoc, GRANNY5556665 and six other players</li><li>Impact: illegitimate leaderboard totals during Beesmas</li></ul><p>The leaderboard history records BuyKocmoc at about 175 quadrillion honey, GRANNY5556665 at about 55 quadrillion, and six other exploit accounts appearing on December 29. They were later removed.</p><p>The surviving public sources clearly document the leaderboard abuse but do not reliably establish one specific exploit method, so this entry does not speculate about how the honey was generated.</p>`
+  },
+  {
+    date:"2026-01-19", year:"2026", type:"exploit",
+    label:"Atlas exploit wave",
+    title:"Atlas exploitation becomes widespread in public servers",
+    sourceHref:"https://www.reddit.com/r/BeeSwarmSimulator/comments/1qhb5jf/atlas_ghost_memory_match/",
+    extraSources:[
+      {href:"https://bee-swarm-simulator.fandom.com/f/p/4400000000000802410", label:"Community report on the 2026 exploiting problem"},
+      {href:"https://www.reddit.com/r/BeeSwarmSimulator/comments/1rbphw5/its_time_to_stop_the_exploiters_i_made_a_petition/", label:"February 2026 community report"}
+    ],
+    sourceHtml:`<ul class="source-list"><li>Who: widespread users; no single perpetrator or creator is reliably documented in the sources reviewed</li><li>Abused systems: movement, token collection, spawning/loot detection and automated farming</li><li>Impact: public-server disruption, rare-loot sniping, leaderboard concerns and sticker-economy concerns</li></ul><p>Beginning around early 2026, community reports increasingly described players using the Atlas exploit tool to fly or teleport between fields and immediately collect valuable spawned loot. Reports also described bot-like accounts and automated farming behavior.</p><p>Players raised concerns that mass farming of rare drops and stickers could distort trading values and deprive normal players of shared loot. These descriptions come from community observations rather than an official technical incident report, so this timeline avoids attributing the wave to a specific individual.</p>`
+  },
+  {
+    date:"2026-08-26", year:"2026", type:"incident",
+    label:"BSS 1:1 takedowns",
+    title:"BSS 1:1 is delisted, followed by reuploads and successor clones",
+    sourceHref:"https://www.reddit.com/r/BeeSwarmSimulator/comments/1vz7cfk/what_does_this_mean/",
+    extraSources:[
+      {href:"https://www.reddit.com/r/BeeSwarmSimulator/comments/1w2g35n/can_someone_explain_the_11_thing/", label:"Community explanation of BSS 1:1"},
+      {href:"https://www.roblox.com/games/135017882512650/bee-game-1-1", label:"One documented BSS 1:1 reupload"},
+      {href:"https://spawnscope.com/games/bee-game-reworked/", label:"BSS Reworked public game history"}
+    ],
+    sourceHtml:`<ul class="source-list"><li>Original incident: BSS 1:1, an extremely close Bee Swarm Simulator copy with additional systems such as rebirths</li><li>Action: the game was delisted from Roblox in late August 2026 after a copyright complaint</li><li>Aftermath: copies and reuploads of the 1:1 project appeared, while related projects also branched into modified fangames</li></ul><p>In August 2026, the community began referring to an unusually faithful Bee Swarm Simulator clone as “BSS 1:1.” Contemporary discussion described it as a modified copy of BSS that retained much of the original game while adding features such as rebirths and quality-of-life changes. Onett publicly objected to exact copies while distinguishing them from games that merely take inspiration from Bee Swarm Simulator.</p><p>After the original 1:1 experience was delisted, copies and reuploads continued to appear. A Roblox listing titled “bee game 1:1” is one surviving documented example, although it currently has no running experience.</p><p><strong>Major related projects documented in the clone wave:</strong> BSS 1:1 itself; direct BSS 1:1 reuploads such as “bee game 1:1”; and BSS Reworked / Bee Game - Reworked, a later fangame that publicly advertised restoration of hive and rebirth progress from BSS 1:1. BSS Reworked launched on August 22, 2026 and explicitly credits Onett, so this timeline lists it as a major successor/derivative project rather than claiming it was itself the same exact-copy upload.</p><p>The underlying BSS 1:1 file also circulated among users, helping additional copies appear. Public discussion disagrees on exactly how complete different leaked or recreated files were, so the timeline does not claim that every reupload contained the original server-side code or that every similarly named game came from one identical file.</p>`
+  },
+  {
+    date:"2026-04-24", year:"2026", type:"exploit",
+    label:"Memory Match ban wave",
+    title:"Ban wave targets Ghost Memory Match abuse",
+    sourceHref:"https://www.reddit.com/r/BeeSwarmSimulator/comments/1su2hy9/exploiters_are_perma_banned/",
+    extraSources:[
+      {href:"https://www.reddit.com/r/BeeSwarmSimulator/comments/1sglff5/how_freaking_rare_is_that_i_just_unlocked_the/", label:"Earlier April 2026 discussion of Memory Match abuse"}
+    ],
+    sourceHtml:`<ul class="source-list"><li>Who: multiple exploit users; no single responsible player</li><li>Abused system: Memory Match cooldowns and repeated reward attempts</li><li>Response: a large ban wave was reported on April 24, 2026</li></ul><p>In April 2026, players discussed a “Ghost Memory Match” exploit that allowed abnormal repeated use of Memory Match systems to chase rare rewards. On April 24, community reports described a ban wave affecting accounts whose logs showed excessive exploit-driven Memory Match usage.</p><p>Because the available evidence is community reporting rather than a published enforcement log from Onett, this entry records the ban wave and broadly documented abuse without claiming that every reported ban had the same cause.</p>`
+  }
+];
+
+const TIMELINE_EVENTS = [...EVENTS, ...COMMUNITY_MILESTONES, ...EXPLOIT_INCIDENTS]
+  .sort((a, b) => a.date.localeCompare(b.date) || ({undefined:0, incident:1, exploit:1, community:2}[String(a.type)] ?? 0) - ({undefined:0, incident:1, exploit:1, community:2}[String(b.type)] ?? 0));
 
 // ---------------------------------------------------------------
 // RENDER
@@ -1361,14 +1509,14 @@ function shortDate(d) {
 
 TIMELINE_EVENTS.forEach((ev, i) => {
   const btn = document.createElement("button");
-  btn.className = "stop" + (ev.era ? " era" : "") + (ev.type === "community" ? " community" : "");
+  btn.className = "stop" + (ev.era ? " era" : "") + (ev.type === "community" ? " community" : "") + (ev.type === "incident" ? " incident" : "") + (ev.type === "exploit" ? " exploit" : "");
   btn.style.setProperty("--i", i);
   btn.setAttribute("aria-haspopup", "dialog");
   btn.innerHTML = `
     <span class="stop-marker"></span>
     <span class="stop-date">${shortDate(ev.date)}</span>
     <span class="stop-label">${ev.label}</span>
-    <span class="stop-tag">${ev.type === "community" ? "Community Milestone" : (ev.era ? "Major Update" : "Update")}</span>
+    <span class="stop-tag">${ev.type === "community" ? "Community Milestone" : (ev.type === "incident" ? "Incident" : (ev.type === "exploit" ? "Exploit" : (ev.era ? "Major Update" : "Update")))}</span>
   `;
   btn.addEventListener("click", (e) => {
     if (suppressNextClick) {
@@ -1552,12 +1700,16 @@ function renderPatchEntry(group) {
 }
 
 function buildPatchNotes(ev) {
-  if (ev.type === "community") {
-    const doc = new DOMParser().parseFromString(`<div id="communityRoot">${ev.sourceHtml}</div>`, "text/html");
-    const root = doc.getElementById("communityRoot");
+  if (ev.type === "community" || ev.type === "incident" || ev.type === "exploit") {
+    const doc = new DOMParser().parseFromString(`<div id="specialRoot">${ev.sourceHtml}</div>`, "text/html");
+    const root = doc.getElementById("specialRoot");
     const bullets = [...root.querySelectorAll("li")].map(li => cleanPatchText(li.textContent)).filter(Boolean);
     const details = [...root.querySelectorAll("p")].map(p => cleanPatchText(p.textContent)).filter(Boolean);
-    let html = `<div class="patch-stack"><section class="patch-section community-note category-community" style="--section-i:0"><h3 class="patch-heading">Community milestone</h3>`;
+    const isIncident = ev.type === "incident";
+    const isExploit = ev.type === "exploit";
+    const heading = isExploit ? "Exploit" : (isIncident ? "Incident" : "Community milestone");
+    const classes = isExploit ? "category-exploit" : (isIncident ? "category-incident" : "community-note category-community");
+    let html = `<div class="patch-stack"><section class="patch-section ${classes}" style="--section-i:0"><h3 class="patch-heading">${heading}</h3>`;
     if (bullets.length) html += `<ul class="patch-bullets">${bullets.map(x => `<li>${escapeHtml(x)}</li>`).join("")}</ul>`;
     if (details.length) html += `<div class="patch-details">${details.map(x => `<p>${escapeHtml(x)}</p>`).join("")}</div>`;
     html += `</section></div>`;
@@ -1763,8 +1915,8 @@ function openModal(ev, originEl) {
   overlay.classList.remove("closing");
   setModalOrigin(originEl);
   modalDate.textContent = formatDate(ev.date);
-  modalBadge.textContent = ev.type === "community" ? "Community Milestone" : (ev.era ? "Major Update" : "Update");
-  modalBadge.className = "modal-badge" + (ev.type === "community" ? " community" : (ev.era ? "" : " update"));
+  modalBadge.textContent = ev.type === "community" ? "Community Milestone" : (ev.type === "incident" ? "Incident" : (ev.type === "exploit" ? "Exploit" : (ev.era ? "Major Update" : "Update")));
+  modalBadge.className = "modal-badge" + (ev.type === "community" ? " community" : (ev.type === "incident" ? " incident" : (ev.type === "exploit" ? " exploit" : (ev.era ? "" : " update"))));
   modalTitle.textContent = ev.title;
   modalArt.onerror = () => {
     modalArt.onerror = null;
@@ -1774,7 +1926,7 @@ function openModal(ev, originEl) {
   modalArt.alt = `${ev.title} update artwork`;
 
   let html = buildPatchNotes(ev);
-  const sourceLabel = ev.type === "community" ? "Community milestone source" : `Primary source — ${formatDate(ev.date)}`;
+  const sourceLabel = ev.type === "community" ? "Community milestone source" : ((ev.type === "incident" || ev.type === "exploit") ? "Incident source" : `Primary source — ${formatDate(ev.date)}`);
   const sourceLinks = [{ href: ev.sourceHref, label: sourceLabel }, ...(ev.extraSources || [])];
   html += `<p class="source-note">${sourceLinks.length > 1 ? "Sources" : "Source"}: ${sourceLinks.map(src => `<a href="${src.href}" target="_blank" rel="noopener noreferrer">${escapeHtml(src.label)}</a>`).join(" · ")}</p>`;
 
