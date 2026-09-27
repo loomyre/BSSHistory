@@ -1016,7 +1016,7 @@ a {
 }
 
 .track-scroll {
-  touch-action: pan-y pinch-zoom;
+  touch-action: auto;
   overscroll-behavior-x: contain;
   -webkit-overflow-scrolling: touch;
 }

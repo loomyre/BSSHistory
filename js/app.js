@@ -679,6 +679,9 @@ function edgeLimitInfo(el) {
   };
 
   el.addEventListener("pointerdown", (e) => {
+    // Touch uses native horizontal scrolling and momentum. Pointer capture
+    // here cancels a phone's swipe after the first few pixels.
+    if (e.pointerType === "touch") return;
     // Left-click drag and middle-mouse drag both pan the timeline.
     if (e.button !== 0 && e.button !== 1) return;
 
@@ -769,6 +772,11 @@ function edgeLimitInfo(el) {
   el.addEventListener("pointercancel", endDrag);
   el.addEventListener("lostpointercapture", endDrag);
   window.addEventListener("pointerup", endDrag);
+
+  // Keep wheel targets in sync after native touch scrolling on hybrid devices.
+  el.addEventListener("scroll", () => {
+    if (!smoothWheelRaf && !isDown) targetScroll = el.scrollLeft;
+  }, { passive: true });
 
   // Mouse wheel scrolls the horizontal timeline with eased momentum.
   el.addEventListener("wheel", (e) => {
