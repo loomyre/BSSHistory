@@ -34,10 +34,7 @@
   body {
     font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
     color: var(--text);
-    background:
-      radial-gradient(circle at 12% -10%, rgba(101,184,255,.16), transparent 34rem),
-      radial-gradient(circle at 88% 4%, rgba(245,185,66,.14), transparent 31rem),
-      linear-gradient(180deg, #0d131d 0%, var(--bg) 58%, #070a0f 100%);
+    background: var(--bg);
     min-height: 100vh;
     padding: 34px 22px 64px;
     padding-top: calc(34px + env(safe-area-inset-top, 0px));
@@ -45,12 +42,25 @@
     overflow-x: hidden;
   }
 
+  /* The artwork stays in place as the page scrolls; the tint keeps glass readable. */
   body::before {
     content: "";
     position: fixed;
     inset: 0;
+    z-index: 0;
     pointer-events: none;
-    opacity: .42;
+    background:
+      linear-gradient(180deg, rgba(4, 10, 15, .51), rgba(5, 10, 15, .68)),
+      url("../assets/images/1198.jpg") center center / cover no-repeat;
+  }
+
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: .22;
     background:
       linear-gradient(rgba(255,255,255,.018) 1px, transparent 1px),
       linear-gradient(90deg, rgba(255,255,255,.018) 1px, transparent 1px);
@@ -58,7 +68,12 @@
     mask-image: linear-gradient(to bottom, #000 0%, transparent 78%);
   }
 
-  .wrap { width: min(1160px, 100%); margin: 0 auto; }
+  .wrap {
+    position: relative;
+    z-index: 1;
+    width: min(1160px, 100%);
+    margin: 0 auto;
+  }
 
   header {
     position: relative;
