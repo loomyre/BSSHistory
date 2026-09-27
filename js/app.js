@@ -574,9 +574,7 @@ function edgeLimitInfo(el) {
       cancelAnimationFrame(smoothWheelRaf);
       smoothWheelRaf = 0;
     }
-    if (typeof el.setPointerCapture === "function") {
-      try { el.setPointerCapture(e.pointerId); } catch {}
-    }
+    // Leave simple clicks on the date button; capture only after a drag starts.
     didDrag = false;
     activeEdge = null;
     track.classList.remove("rubberbanding");
@@ -598,7 +596,12 @@ function edgeLimitInfo(el) {
     const rawTarget = scrollLeft - delta * dragScale;
     const { max } = edgeLimitInfo(el);
 
-    if (Math.abs(delta) > 5) didDrag = true;
+    if (!didDrag && Math.abs(delta) > 5) {
+      didDrag = true;
+      if (typeof el.setPointerCapture === "function") {
+        try { el.setPointerCapture(e.pointerId); } catch {}
+      }
+    }
     if (!didDrag) return;
 
     e.preventDefault();
