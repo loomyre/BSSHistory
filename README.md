@@ -28,7 +28,7 @@ Each timeline point opens a dark, translucent update panel with categorized patc
 - Dark transparent glass-style update panels
 - Patch notes automatically grouped into sections such as **New content**, **Quests & events**, **Balance & fixes**, and **Other changes**
 - Improved handling of older patch-note formatting so short bullet lines remain attached to the correct section
-- Update-specific artwork stored locally in `GameIcons/`
+- Update-specific artwork stored locally in `assets/images/`
 - Source-backed event descriptions
 - Responsive layout with a full-width footer aligned to the main content
 - Animated modal transitions and timeline interactions
@@ -49,7 +49,7 @@ Each timeline point opens a dark, translucent update panel with categorized patc
 BSSHistory/
 ├── index.html
 ├── README.md
-└── GameIcons/
+└── assets/images/
     ├── BeeSwarmActualFirstIcon.webp
     ├── BSSGamesIcon.webp
     ├── BSSStickerUpdateIcon.webp

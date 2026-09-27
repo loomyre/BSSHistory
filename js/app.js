@@ -410,33 +410,33 @@ function setModalOrigin(originEl) {
   modal.style.setProperty("--modal-y", `${y}px`);
 }
 
-const DEFAULT_GAME_ART = "GameIcons/BeeSwarmActualFirstIcon.webp";
+const DEFAULT_GAME_ART = "assets/images/BeeSwarmActualFirstIcon.webp";
 
 // Original artwork stored alongside this site in the GitHub repository.
 // Dates without a dedicated historical thumbnail intentionally fall back to
 // the first Bee Swarm Simulator game icon instead of generated artwork.
 const UPDATE_ARTWORK = {
-  "2018-05-07": "GameIcons/BeeSwarmActualFirstIcon.webp",
-  "2018-06-02": "GameIcons/CrimsonCobaltIcon.webp",
-  "2023-05-07": "GameIcons/BSSRoboBearUpdate2xThumb.webp",
-  "2018-04-10": "GameIcons/BeeSwarmActualFirstIcon.webp",
-  "2018-04-27": "GameIcons/BeeSwarmActualFirstIcon.webp",
-  "2018-05-12": "GameIcons/TabbyUpdateIcon.webp",
-  "2018-05-26": "GameIcons/BSSGummyInvasionUpdate.webp",
-  "2018-07-11": "GameIcons/BSSMotherBearUpdate.webp",
-  "2018-09-10": "GameIcons/NighttimeUpdateIcon.webp",
-  "2018-12-19": "GameIcons/BSSIconJan19.webp",
-  "2018-12-25": "GameIcons/BSSIconJan19.webp",
-  "2019-04-17": "GameIcons/BSSEggHunt2019Update.webp",
-  "2019-09-27": "GameIcons/Windycover.webp",
-  "2019-12-22": "GameIcons/Bssbeesmas2019cover.webp",
-  "2020-04-07": "GameIcons/Beeswarmegghuntlogo.webp",
-  "2022-12-26": "GameIcons/BSSRoboBearUpdateThumb.webp",
-  "2022-12-30": "GameIcons/BSSRoboBearUpdate2xThumb.webp",
-  "2024-01-13": "GameIcons/BSSStickerUpdateIcon.webp",
-  "2024-01-17": "GameIcons/BSSStickerUpdate2xIcon.webp",
-  "2024-05-24": "GameIcons/BSSClassicIcon.webp",
-  "2025-12-26": "GameIcons/BSSBeesmas20252xEvent.webp"
+  "2018-05-07": "assets/images/BeeSwarmActualFirstIcon.webp",
+  "2018-06-02": "assets/images/CrimsonCobaltIcon.webp",
+  "2023-05-07": "assets/images/BSSRoboBearUpdate2xThumb.webp",
+  "2018-04-10": "assets/images/BeeSwarmActualFirstIcon.webp",
+  "2018-04-27": "assets/images/BeeSwarmActualFirstIcon.webp",
+  "2018-05-12": "assets/images/TabbyUpdateIcon.webp",
+  "2018-05-26": "assets/images/BSSGummyInvasionUpdate.webp",
+  "2018-07-11": "assets/images/BSSMotherBearUpdate.webp",
+  "2018-09-10": "assets/images/NighttimeUpdateIcon.webp",
+  "2018-12-19": "assets/images/BSSIconJan19.webp",
+  "2018-12-25": "assets/images/BSSIconJan19.webp",
+  "2019-04-17": "assets/images/BSSEggHunt2019Update.webp",
+  "2019-09-27": "assets/images/Windycover.webp",
+  "2019-12-22": "assets/images/Bssbeesmas2019cover.webp",
+  "2020-04-07": "assets/images/Beeswarmegghuntlogo.webp",
+  "2022-12-26": "assets/images/BSSRoboBearUpdateThumb.webp",
+  "2022-12-30": "assets/images/BSSRoboBearUpdate2xThumb.webp",
+  "2024-01-13": "assets/images/BSSStickerUpdateIcon.webp",
+  "2024-01-17": "assets/images/BSSStickerUpdate2xIcon.webp",
+  "2024-05-24": "assets/images/BSSClassicIcon.webp",
+  "2025-12-26": "assets/images/BSSBeesmas20252xEvent.webp"
 };
 
 function getEventArtwork(ev) {
