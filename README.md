@@ -47,12 +47,6 @@ Information in the archive is compiled from community-maintained Bee Swarm Simul
 
 The archive is intended as a historical reference. Some older events—especially exploit incidents and community controversies—are documented primarily through surviving community reports rather than official technical statements. Where evidence is uncertain or disputed, the timeline is written to reflect that uncertainty rather than presenting speculation as fact.
 
-## Running locally
-
-No installation is required. Open `index.html` in a browser, or serve the folder with any simple static web server.
-
-For GitHub Pages, publish the repository from the `main` branch and `/ (root)` directory.
-
 ## Contributing
 
 Corrections, missing historical events, stronger primary sources, and more accurate update artwork are welcome. When adding historical claims, include a public source whenever possible and avoid presenting unverified community claims as confirmed fact.
