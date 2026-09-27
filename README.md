@@ -1,0 +1,1 @@
+Information throughout this timeline was compiled from community-maintained wikis, Reddit discussions, videos, public leaderboards, and other Bee Swarm Simulator community resources. Individual milestones may also link to their specific source.
