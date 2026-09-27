@@ -472,10 +472,69 @@ function updateTaskNavigation() {
   taskPosition.textContent = `${activeEventIndex + 1} of ${TIMELINE_EVENTS.length}`;
 }
 
+let queuedEventIndex = null;
+let switchAnimation = null;
+let switchPhase = "idle";
+let switchSequence = 0;
+
+function cancelUpdateSwitch() {
+  switchSequence++;
+  switchAnimation?.cancel();
+  switchAnimation = null;
+  switchPhase = "idle";
+  queuedEventIndex = null;
+}
+
 function browseUpdate(direction) {
-  const nextIndex = activeEventIndex + direction;
+  const baseIndex = queuedEventIndex ?? activeEventIndex;
+  const nextIndex = baseIndex + direction;
   if (nextIndex < 0 || nextIndex >= TIMELINE_EVENTS.length) return;
-  openModal(TIMELINE_EVENTS[nextIndex]);
+  queuedEventIndex = nextIndex;
+
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches || !modal.animate) {
+    const selected = queuedEventIndex;
+    cancelUpdateSwitch();
+    openModal(TIMELINE_EVENTS[selected]);
+    return;
+  }
+
+  // Rapid presses update the destination without restarting the outgoing card.
+  if (switchPhase === "out") return;
+
+  const current = getComputedStyle(modal);
+  const fromOpacity = current.opacity;
+  const fromTransform = current.transform === "none" ? "translate3d(0,0,0) scale(1)" : current.transform;
+  switchAnimation?.cancel();
+  const sequence = ++switchSequence;
+  switchPhase = "out";
+  const offset = direction > 0 ? -32 : 32;
+  const outgoing = modal.animate([
+    { opacity: fromOpacity, transform: fromTransform },
+    { opacity: .35, transform: `translate3d(${offset}px,0,0) scale(.985)` }
+  ], { duration: 135, easing: "cubic-bezier(.4,0,1,1)", fill: "forwards" });
+  switchAnimation = outgoing;
+
+  outgoing.finished.then(() => {
+    if (sequence !== switchSequence || queuedEventIndex === null) return;
+    const selected = queuedEventIndex;
+    const arrivalDirection = Math.sign(selected - activeEventIndex) || direction;
+    queuedEventIndex = null;
+    openModal(TIMELINE_EVENTS[selected]);
+    outgoing.cancel();
+
+    const incoming = modal.animate([
+      { opacity: .35, transform: `translate3d(${arrivalDirection * 28}px,0,0) scale(.985)` },
+      { opacity: 1, transform: "translate3d(0,0,0) scale(1)" }
+    ], { duration: 280, easing: "cubic-bezier(.16,1,.3,1)", fill: "forwards" });
+    switchAnimation = incoming;
+    switchPhase = "in";
+    incoming.finished.then(() => {
+      if (sequence !== switchSequence) return;
+      incoming.cancel();
+      switchAnimation = null;
+      switchPhase = "idle";
+    }).catch(() => {});
+  }).catch(() => {});
 }
 
 function openModal(ev, originEl) {
@@ -516,11 +575,12 @@ function openModal(ev, originEl) {
       toggle.textContent = expanded ? "Show less" : toggle.dataset.label;
     });
   }
-  closeBtn.focus({ preventScroll: true });
+  if (!isAlreadyOpen) closeBtn.focus({ preventScroll: true });
 }
 
 function closeModal() {
   if (!overlay.classList.contains("open")) return;
+  cancelUpdateSwitch();
   overlay.classList.remove("open");
   overlay.classList.add("closing");
   closeTimer = setTimeout(() => {
@@ -530,7 +590,7 @@ function closeModal() {
       lastModalTrigger.focus({ preventScroll: true });
     }
     lastModalTrigger = null;
-  }, 180);
+  }, 240);
 }
 
 closeBtn.addEventListener("click", closeModal);
@@ -548,7 +608,7 @@ function settleTaskStage() {
   taskStage.classList.add("is-settling");
   taskStage.style.transform = "translate3d(0, 0, 0)";
   clearTimeout(taskSettleTimer);
-  taskSettleTimer = setTimeout(() => taskStage.classList.remove("is-settling"), 300);
+  taskSettleTimer = setTimeout(() => taskStage.classList.remove("is-settling"), 400);
 }
 
 taskStage.addEventListener("pointerdown", (e) => {

@@ -1162,7 +1162,7 @@ a {
 }
 
 .task-stage.is-settling {
-  transition: transform .28s cubic-bezier(.2,.8,.2,1);
+  transition: transform .4s cubic-bezier(.18,1,.25,1);
 }
 .task-stage.is-dragging {
   cursor: grabbing;
@@ -1330,4 +1330,28 @@ a {
 
 @media (prefers-reduced-motion: reduce) {
   .task-peek { transform: none; }
+}
+
+
+/* The whole card group enters as a single surface; date changes animate separately. */
+.task-stage .modal,
+.overlay.closing .task-stage .modal { animation: none; }
+
+.overlay.open .task-view {
+  animation: taskViewIn .42s cubic-bezier(.2,.8,.2,1) both;
+}
+.overlay.closing .task-view {
+  animation: taskViewOut .24s cubic-bezier(.4,0,.7,.2) both;
+}
+@keyframes taskViewIn {
+  from { opacity: 0; transform: translate3d(0,18px,0) scale(.975); }
+  to { opacity: 1; transform: translate3d(0,0,0) scale(1); }
+}
+@keyframes taskViewOut {
+  from { opacity: 1; transform: translate3d(0,0,0) scale(1); }
+  to { opacity: 0; transform: translate3d(0,12px,0) scale(.985); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .overlay.open .task-view,
+  .overlay.closing .task-view { animation-duration: .01ms !important; }
 }
