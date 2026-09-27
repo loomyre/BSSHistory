@@ -2124,20 +2124,27 @@ function edgeLimitInfo(el) {
 
 (function enableDragScroll(el) {
   let isDown = false;
+  let dragButton = null;
   let startX = 0;
   let scrollLeft = 0;
   let didDrag = false;
   let activeEdge = null;
 
   el.addEventListener("mousedown", (e) => {
-    if (e.button !== 0) return;
+    // Left-click drag and middle-mouse drag both pan the timeline.
+    if (e.button !== 0 && e.button !== 1) return;
+
     isDown = true;
+    dragButton = e.button;
     didDrag = false;
     activeEdge = null;
     track.classList.remove("rubberbanding");
     el.classList.add("dragging");
     startX = e.pageX - el.offsetLeft;
     scrollLeft = el.scrollLeft;
+
+    // Stop the browser's native middle-click autoscroll so the timeline owns it.
+    if (e.button === 1) e.preventDefault();
   });
 
   el.addEventListener("mousemove", (e) => {
@@ -2163,7 +2170,6 @@ function edgeLimitInfo(el) {
       const pull = Math.min(96, over * 0.38);
       const signed = activeEdge === "left" ? pull : -pull;
 
-      // Keep the real scroll position at the boundary and visually stretch the track.
       el.scrollLeft = edge;
       track.style.transform = `translate3d(${signed}px, 0, 0)`;
       return;
@@ -2179,7 +2185,8 @@ function edgeLimitInfo(el) {
     isDown = false;
     el.classList.remove("dragging");
 
-    if (didDrag) {
+    // Only left-drag needs click suppression; middle mouse never opens a date.
+    if (didDrag && dragButton === 0) {
       suppressNextClick = true;
       setTimeout(() => { suppressNextClick = false; }, 0);
     }
@@ -2193,10 +2200,32 @@ function edgeLimitInfo(el) {
     }
 
     activeEdge = null;
+    dragButton = null;
   };
 
   el.addEventListener("mouseup", endDrag);
   el.addEventListener("mouseleave", endDrag);
+  window.addEventListener("mouseup", endDrag);
+
+  // Mouse wheel / middle wheel scrolls the horizontal timeline.
+  el.addEventListener("wheel", (e) => {
+    const { max } = edgeLimitInfo(el);
+    if (max <= 0) return;
+
+    const amount = Math.abs(e.deltaY) >= Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
+    if (!amount) return;
+
+    const next = Math.max(0, Math.min(max, el.scrollLeft + amount));
+    if (next !== el.scrollLeft) {
+      e.preventDefault();
+      el.scrollLeft = next;
+    }
+  }, { passive: false });
+
+  // Prevent browser middle-click autoscroll from appearing over the timeline.
+  el.addEventListener("auxclick", (e) => {
+    if (e.button === 1) e.preventDefault();
+  });
 })(scrollBox);
 </script>
 </body>
