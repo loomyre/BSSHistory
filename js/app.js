@@ -40,6 +40,12 @@ const modalTitle = document.getElementById("modalTitle");
 const modalBody = document.getElementById("modalBody");
 const modalArt = document.getElementById("modalArt");
 const closeBtn = document.getElementById("closeBtn");
+const taskStage = document.getElementById("taskStage");
+const prevPreview = document.getElementById("prevPreview");
+const nextPreview = document.getElementById("nextPreview");
+const prevEvent = document.getElementById("prevEvent");
+const nextEvent = document.getElementById("nextEvent");
+const taskPosition = document.getElementById("taskPosition");
 
 function formatDate(d) {
   const parts = d.split("-");
@@ -445,11 +451,41 @@ function getEventArtwork(ev) {
 }
 
 let lastModalTrigger = null;
+let activeEventIndex = 0;
+let closeTimer = 0;
+
+function renderTaskPreview(button, index, direction) {
+  const ev = TIMELINE_EVENTS[index];
+  button.disabled = !ev;
+  if (!ev) return;
+  button.setAttribute("aria-label", `${direction}: ${ev.title}, ${formatDate(ev.date)}`);
+  button.querySelector(".task-peek-art").src = getEventArtwork(ev);
+  button.querySelector(".task-peek-date").textContent = formatDate(ev.date);
+  button.querySelector(".task-peek-title").textContent = ev.title;
+}
+
+function updateTaskNavigation() {
+  renderTaskPreview(prevPreview, activeEventIndex - 1, "Previous update");
+  renderTaskPreview(nextPreview, activeEventIndex + 1, "Next update");
+  prevEvent.disabled = activeEventIndex === 0;
+  nextEvent.disabled = activeEventIndex === TIMELINE_EVENTS.length - 1;
+  taskPosition.textContent = `${activeEventIndex + 1} of ${TIMELINE_EVENTS.length}`;
+}
+
+function browseUpdate(direction) {
+  const nextIndex = activeEventIndex + direction;
+  if (nextIndex < 0 || nextIndex >= TIMELINE_EVENTS.length) return;
+  openModal(TIMELINE_EVENTS[nextIndex]);
+}
 
 function openModal(ev, originEl) {
-  lastModalTrigger = originEl || document.activeElement;
+  const isAlreadyOpen = overlay.classList.contains("open");
+  clearTimeout(closeTimer);
+  if (!isAlreadyOpen) lastModalTrigger = originEl || document.activeElement;
   overlay.classList.remove("closing");
-  setModalOrigin(originEl);
+  if (!isAlreadyOpen) setModalOrigin(originEl);
+  activeEventIndex = TIMELINE_EVENTS.indexOf(ev);
+  updateTaskNavigation();
   modalDate.textContent = formatDate(ev.date);
   modalBadge.textContent = ev.type === "community" ? "Community Milestone" : (ev.type === "incident" ? "Incident" : (ev.type === "exploit" ? "Exploit" : (ev.era ? "Major Update" : "Update")));
   modalBadge.className = "modal-badge" + (ev.type === "community" ? " community" : (ev.type === "incident" ? " incident" : (ev.type === "exploit" ? " exploit" : (ev.era ? "" : " update"))));
@@ -487,7 +523,7 @@ function closeModal() {
   if (!overlay.classList.contains("open")) return;
   overlay.classList.remove("open");
   overlay.classList.add("closing");
-  setTimeout(() => {
+  closeTimer = setTimeout(() => {
     overlay.classList.remove("closing");
     document.body.style.overflow = "";
     if (lastModalTrigger && typeof lastModalTrigger.focus === "function") {
@@ -499,12 +535,38 @@ function closeModal() {
 
 closeBtn.addEventListener("click", closeModal);
 overlay.addEventListener("click", (e) => { if (e.target === overlay) closeModal(); });
+prevPreview.addEventListener("click", () => browseUpdate(-1));
+nextPreview.addEventListener("click", () => browseUpdate(1));
+prevEvent.addEventListener("click", () => browseUpdate(-1));
+nextEvent.addEventListener("click", () => browseUpdate(1));
+
+let swipeStart = null;
+taskStage.addEventListener("pointerdown", (e) => {
+  if (e.pointerType === "touch") swipeStart = { x: e.clientX, y: e.clientY, id: e.pointerId };
+});
+taskStage.addEventListener("pointerup", (e) => {
+  if (!swipeStart || swipeStart.id !== e.pointerId) return;
+  const dx = e.clientX - swipeStart.x;
+  const dy = e.clientY - swipeStart.y;
+  swipeStart = null;
+  if (Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.3) {
+    e.preventDefault();
+    browseUpdate(dx < 0 ? 1 : -1);
+  }
+});
+taskStage.addEventListener("pointercancel", () => { swipeStart = null; });
 document.addEventListener("keydown", (e) => {
   if (!overlay.classList.contains("open")) return;
 
   if (e.key === "Escape") {
     e.preventDefault();
     closeModal();
+    return;
+  }
+
+  if (e.key === "ArrowLeft" || e.key === "ArrowRight") {
+    e.preventDefault();
+    browseUpdate(e.key === "ArrowLeft" ? -1 : 1);
     return;
   }
 

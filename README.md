@@ -14,7 +14,7 @@ The timeline is organized into several event types:
 - 🟥 **Incident** — controversies, takedowns, clone/copyright events, and other notable disruptions
 - 🔴 **Exploit** — major exploit waves, glitch abuse, leaderboard manipulation, and related enforcement events
 
-Each timeline point opens a dark, translucent update panel with categorized patch notes, historical context, update artwork, and source links where available.
+Each timeline point opens a recent-apps-inspired update viewer with a centered reading card, adjacent update previews, categorized patch notes, artwork, and source links where available.
 
 ## Features
 
@@ -25,7 +25,7 @@ Each timeline point opens a dark, translucent update panel with categorized patc
 - Click-only event opening, so dragging does not accidentally open an update
 - Chronological update and community history
 - Separate visual categories for updates, milestones, incidents, and exploits
-- Dark transparent glass-style update panels
+- Dark glass update cards with adjacent previews, desktop arrow navigation, and touch swipe navigation
 - Patch notes automatically grouped into sections such as **New content**, **Quests & events**, **Balance & fixes**, and **Other changes**
 - Improved handling of older patch-note formatting so short bullet lines remain attached to the correct section
 - Update-specific artwork stored locally in `assets/images/`
@@ -34,6 +34,12 @@ Each timeline point opens a dark, translucent update panel with categorized patc
 - Animated modal transitions and timeline interactions
 - Mobile-friendly layout
 - GitHub Pages compatible — no framework or build process required
+
+## Update viewer controls
+
+- **Desktop:** click a neighboring card, use the arrow buttons, or press the left/right arrow keys
+- **Touchscreen:** swipe horizontally to switch updates; scroll vertically inside the selected card to read
+- **Close:** use the ✕ button, click outside the viewer, or press Escape
 
 ## Timeline controls
 

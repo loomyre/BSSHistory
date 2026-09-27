@@ -49,23 +49,52 @@
 </div>
 
 <div class="overlay" id="overlay">
-  <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
-    <div class="modal-head">
-      <button class="modal-close" id="closeBtn" aria-label="Close">✕</button>
-      <div class="modal-hero">
-        <div class="modal-art-wrap" aria-hidden="true">
-          <img class="modal-art" id="modalArt" alt="" loading="lazy" referrerpolicy="no-referrer">
-        </div>
-        <div class="modal-heading-copy">
-          <div class="modal-eyebrow">
-            <span class="modal-date" id="modalDate"></span>
-            <span class="modal-badge" id="modalBadge"></span>
-          </div>
-          <h2 class="modal-title" id="modalTitle"></h2>
-        </div>
+  <div class="task-view" id="taskView">
+    <div class="task-topbar">
+      <div class="task-identity">
+        <img src="./assets/images/BeeSwarmActualFirstIcon.webp" alt="" width="42" height="42">
+        <span>Bee Swarm Simulator <small>History Archive</small></span>
       </div>
+      <button class="modal-close" id="closeBtn" aria-label="Close update viewer">✕</button>
     </div>
-    <div class="modal-body" id="modalBody"></div>
+
+    <div class="task-stage" id="taskStage">
+      <button class="task-peek task-peek--prev" id="prevPreview" type="button" aria-label="Previous update">
+        <img class="task-peek-art" alt="" loading="lazy">
+        <span class="task-peek-date"></span>
+        <strong class="task-peek-title"></strong>
+      </button>
+
+      <div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-head">
+          <div class="modal-hero">
+            <div class="modal-art-wrap" aria-hidden="true">
+              <img class="modal-art" id="modalArt" alt="" loading="lazy" referrerpolicy="no-referrer">
+            </div>
+            <div class="modal-heading-copy">
+              <div class="modal-eyebrow">
+                <span class="modal-date" id="modalDate"></span>
+                <span class="modal-badge" id="modalBadge"></span>
+              </div>
+              <h2 class="modal-title" id="modalTitle"></h2>
+            </div>
+          </div>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+      </div>
+
+      <button class="task-peek task-peek--next" id="nextPreview" type="button" aria-label="Next update">
+        <img class="task-peek-art" alt="" loading="lazy">
+        <span class="task-peek-date"></span>
+        <strong class="task-peek-title"></strong>
+      </button>
+    </div>
+
+    <div class="task-controls" aria-label="Browse updates">
+      <button type="button" id="prevEvent" aria-label="Previous update">←</button>
+      <span id="taskPosition" aria-live="polite"></span>
+      <button type="button" id="nextEvent" aria-label="Next update">→</button>
+    </div>
   </div>
 </div>
 
