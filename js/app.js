@@ -4,6 +4,7 @@ import { TIMELINE_EVENTS } from "../data/events.js";
 // RENDER
 // ---------------------------------------------------------------
 const track = document.getElementById("track");
+document.getElementById("eventCount").textContent = TIMELINE_EVENTS.length;
 
 function shortDate(d) {
   const parts = d.split("-");

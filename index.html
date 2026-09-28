@@ -3,19 +3,27 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#090d14">
+<meta name="theme-color" content="#17342c">
 <meta name="description" content="An interactive historical archive of Bee Swarm Simulator updates, milestones, incidents and community events.">
 <title>Bee Swarm Simulator History Archive</title>
-<link rel="stylesheet" href="./css/styles.css?v=mobile-perf-1">
+<link rel="stylesheet" href="./css/styles.css?v=journal-1">
 </head>
 <body>
 <div class="wrap">
   <header>
-    <p class="kicker">🐝 Bee Swarm Simulator historical archive</p>
-    <h1>Bee Swarm Simulator: <span class="title-tail">History Archive</span></h1>
-    <p class="sub">Explore Bee Swarm Simulator history from its earliest patches to major updates, community records, exploit waves, controversies, and other notable events. Open any point on the timeline for a concise, source-backed breakdown.</p>
+    <div class="hero-copy">
+      <p class="kicker">✦ The Bee Swarm chronicle <span>2018 — present</span></p>
+      <h1>Every season has <span class="title-tail">a story.</span></h1>
+      <p class="sub">Explore the updates, community milestones, and unexpected moments that shaped Bee Swarm Simulator. Each date opens a source-backed chapter.</p>
+      <div class="hero-index"><strong id="eventCount">85</strong><span>moments in the archive</span><span class="hero-index-arrow" aria-hidden="true">↗</span></div>
+    </div>
+    <div class="hero-art" aria-hidden="true"><span>THE HISTORY ARCHIVE <b>VOL. 01</b></span></div>
   </header>
 
+  <section class="timeline-intro" aria-labelledby="timelineHeading">
+    <div><p class="section-kicker">01 / THE CHRONICLE</p><h2 id="timelineHeading">Follow the trail</h2></div>
+    <p>Scroll, drag, or swipe through the years. Tap a moment to read its story.</p>
+  </section>
   <div class="legend">
     <span><span class="swatch" style="background:var(--blue)"></span> Major update</span>
     <span><span class="swatch" style="background:var(--wax)"></span> Update / patch</span>
@@ -29,7 +37,7 @@
       <div class="track" id="track"></div>
     </div>
   </div>
-  <p class="hint">← scroll or drag to explore the full trail →</p>
+  <p class="hint">← 2018 <span>Keep exploring</span> 2026 →</p>
 
   <footer>
     <p class="footer-title">Bee Swarm Simulator History Archive</p>
@@ -53,7 +61,7 @@
     <div class="task-topbar">
       <div class="task-identity">
         <img src="./assets/images/BeeSwarmActualFirstIcon.webp" alt="" width="42" height="42">
-        <span>Bee Swarm Simulator <small>History Archive</small></span>
+        <span>The history archive <small>Bee Swarm Simulator · Field notes</small></span>
       </div>
       <button class="modal-close" id="closeBtn" aria-label="Close update viewer">✕</button>
     </div>
@@ -98,6 +106,6 @@
   </div>
 </div>
 
-<script type="module" src="./js/app.js?v=mobile-perf-1"></script>
+<script type="module" src="./js/app.js?v=journal-1"></script>
 </body>
 </html>
