@@ -11,6 +11,7 @@ function shortDate(d) {
   return dt.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric", timeZone: "UTC" });
 }
 
+const trackItems = document.createDocumentFragment();
 TIMELINE_EVENTS.forEach((ev, i) => {
   const btn = document.createElement("button");
   btn.className = "stop" + (ev.era ? " era" : "") + (ev.type === "community" ? " community" : "") + (ev.type === "incident" ? " incident" : "") + (ev.type === "exploit" ? " exploit" : "");
@@ -29,8 +30,9 @@ TIMELINE_EVENTS.forEach((ev, i) => {
     }
     openModal(ev, btn);
   });
-  track.appendChild(btn);
+  trackItems.appendChild(btn);
 });
+track.appendChild(trackItems);
 
 const scrollBox = document.getElementById("trackScroll");
 const overlay = document.getElementById("overlay");
@@ -450,6 +452,7 @@ function getEventArtwork(ev) {
   return UPDATE_ARTWORK[ev.date] || DEFAULT_GAME_ART;
 }
 
+const patchHtmlCache = new WeakMap();
 let lastModalTrigger = null;
 let activeEventIndex = 0;
 let closeTimer = 0;
@@ -556,7 +559,11 @@ function openModal(ev, originEl) {
   modalArt.src = getEventArtwork(ev);
   modalArt.alt = `${ev.title} update artwork`;
 
-  let html = buildPatchNotes(ev);
+  let html = patchHtmlCache.get(ev);
+  if (html === undefined) {
+    html = buildPatchNotes(ev);
+    patchHtmlCache.set(ev, html);
+  }
   const sourceLabel = ev.type === "community" ? "Community milestone source" : ((ev.type === "incident" || ev.type === "exploit") ? "Incident source" : `Primary source — ${formatDate(ev.date)}`);
   const sourceLinks = [{ href: ev.sourceHref, label: sourceLabel }, ...(ev.extraSources || [])];
   html += `<p class="source-note">${sourceLinks.length > 1 ? "Sources" : "Source"}: ${sourceLinks.map(src => `<a href="${src.href}" target="_blank" rel="noopener noreferrer">${escapeHtml(src.label)}</a>`).join(" · ")}</p>`;
@@ -603,8 +610,21 @@ nextEvent.addEventListener("click", () => browseUpdate(1));
 let taskGesture = null;
 let suppressTaskClick = false;
 let taskSettleTimer = 0;
+let taskDragFrame = 0;
+let taskDragX = 0;
+
+function flushTaskDrag() {
+  taskDragFrame = 0;
+  taskStage.style.transform = `translate3d(${taskDragX}px, 0, 0)`;
+}
+
+function cancelTaskDragFrame() {
+  if (taskDragFrame) cancelAnimationFrame(taskDragFrame);
+  taskDragFrame = 0;
+}
 
 function settleTaskStage() {
+  cancelTaskDragFrame();
   taskStage.classList.add("is-settling");
   taskStage.style.transform = "translate3d(0, 0, 0)";
   clearTimeout(taskSettleTimer);
@@ -617,6 +637,7 @@ taskStage.addEventListener("pointerdown", (e) => {
 
   const matrix = getComputedStyle(taskStage).transform;
   const currentX = matrix === "none" ? 0 : (new DOMMatrixReadOnly(matrix).m41 || 0);
+  cancelTaskDragFrame();
   clearTimeout(taskSettleTimer);
   taskStage.classList.remove("is-settling");
   taskStage.style.transform = `translate3d(${currentX}px, 0, 0)`;
@@ -642,8 +663,8 @@ taskStage.addEventListener("pointermove", (e) => {
   }
 
   e.preventDefault();
-  const travel = Math.max(-170, Math.min(170, taskGesture.offset + dx * .8));
-  taskStage.style.transform = `translate3d(${travel}px, 0, 0)`;
+  taskDragX = Math.max(-170, Math.min(170, taskGesture.offset + dx * .8));
+  if (!taskDragFrame) taskDragFrame = requestAnimationFrame(flushTaskDrag);
 });
 
 function endTaskGesture(e, cancelled = false) {
