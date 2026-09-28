@@ -478,9 +478,31 @@ let switchIncoming = null;
 let switchPreview = null;
 let switchPhase = "idle";
 let switchSequence = 0;
+let previewAnimations = [];
+
+function stopPreviewReveal() {
+  previewAnimations.forEach(animation => animation.cancel());
+  previewAnimations = [];
+}
+
+function revealTaskPreviews(initial = false) {
+  stopPreviewReveal();
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  [prevPreview, nextPreview].forEach((button, index) => {
+    if (button.disabled) return;
+    const targetOpacity = getComputedStyle(button).opacity;
+    const animation = button.animate(
+      [{ opacity: 0 }, { opacity: targetOpacity }],
+      { duration: 340, delay: (initial ? 120 : 25) + index * 55,
+        easing: "cubic-bezier(.2,.8,.2,1)", fill: "backwards" }
+    );
+    previewAnimations.push(animation);
+  });
+}
 
 function cancelUpdateSwitch() {
   switchSequence++;
+  stopPreviewReveal();
   switchAnimations.forEach(animation => animation.cancel());
   switchAnimations = [];
   switchIncoming?.remove();
@@ -514,6 +536,7 @@ function advanceQueuedUpdate() {
     return;
   }
   const direction = Math.sign(queuedEventIndex - activeEventIndex);
+  stopPreviewReveal();
   const selected = activeEventIndex + direction;
   const preview = direction > 0 ? nextPreview : prevPreview;
   const cardWidth = modal.offsetWidth;
@@ -590,6 +613,7 @@ function advanceQueuedUpdate() {
     switchPreview = null;
     switchAnimations = [];
     switchPhase = "idle";
+    if (queuedEventIndex === activeEventIndex) revealTaskPreviews();
     advanceQueuedUpdate();
   }).catch(() => {});
 }
@@ -645,6 +669,7 @@ function openModal(ev, originEl) {
   overlay.classList.add("open");
   document.body.style.overflow = "hidden";
   modal.scrollTop = 0;
+  revealTaskPreviews(!isAlreadyOpen);
   if (!isAlreadyOpen) closeBtn.focus({ preventScroll: true });
 }
 
