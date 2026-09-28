@@ -37,11 +37,7 @@ track.appendChild(trackItems);
 
 const scrollBox = document.getElementById("trackScroll");
 const overlay = document.getElementById("overlay");
-const modalDate = document.getElementById("modalDate");
-const modalBadge = document.getElementById("modalBadge");
-const modalTitle = document.getElementById("modalTitle");
-const modalBody = document.getElementById("modalBody");
-const modalArt = document.getElementById("modalArt");
+let modal = document.getElementById("modal");
 const closeBtn = document.getElementById("closeBtn");
 const taskStage = document.getElementById("taskStage");
 const prevPreview = document.getElementById("prevPreview");
@@ -478,7 +474,7 @@ function updateTaskNavigation() {
 
 let queuedEventIndex = null;
 let switchAnimations = [];
-let switchFlight = null;
+let switchIncoming = null;
 let switchPreview = null;
 let switchPhase = "idle";
 let switchSequence = 0;
@@ -487,11 +483,10 @@ function cancelUpdateSwitch() {
   switchSequence++;
   switchAnimations.forEach(animation => animation.cancel());
   switchAnimations = [];
-  switchFlight?.remove();
-  switchFlight = null;
+  switchIncoming?.remove();
+  switchIncoming = null;
   if (switchPreview) switchPreview.style.visibility = "";
   switchPreview = null;
-  modal.style.opacity = "";
   switchPhase = "idle";
   queuedEventIndex = null;
 }
@@ -521,94 +516,100 @@ function advanceQueuedUpdate() {
   const direction = Math.sign(queuedEventIndex - activeEventIndex);
   const selected = activeEventIndex + direction;
   const preview = direction > 0 ? nextPreview : prevPreview;
+  const cardWidth = modal.offsetWidth;
   const peekRect = preview.getBoundingClientRect();
   const cardRect = modal.getBoundingClientRect();
-  const stageMatrix = getComputedStyle(taskStage).transform;
-  const stageOffset = stageMatrix === "none" ? 0 : new DOMMatrixReadOnly(stageMatrix).m41;
-  const flight = document.createElement("div");
-  flight.className = "task-flight";
-  flight.setAttribute("aria-hidden", "true");
-  flight.innerHTML = preview.innerHTML;
-  flight.querySelector("img").loading = "eager";
-  flight.style.left = `${peekRect.left}px`;
-  flight.style.top = `${peekRect.top}px`;
-  flight.style.width = `${peekRect.width}px`;
-  flight.style.height = `${peekRect.height}px`;
-  overlay.appendChild(flight);
+  const visiblePeek = Math.max(32, Math.min(120, direction > 0
+    ? peekRect.right - cardRect.right : cardRect.left - peekRect.left));
+  const travel = cardWidth - visiblePeek;
+
+  // Build the entire next chapter before motion starts. Both cards remain
+  // separate DOM surfaces until the new one reaches the center.
+  const incoming = modal.cloneNode(false);
+  incoming.removeAttribute("id");
+  incoming.removeAttribute("role");
+  incoming.removeAttribute("aria-modal");
+  incoming.removeAttribute("aria-labelledby");
+  incoming.removeAttribute("style");
+  incoming.classList.add("task-incoming");
+  incoming.setAttribute("aria-hidden", "true");
+  incoming.appendChild(modal.querySelector(".modal-head").cloneNode(true));
+  incoming.appendChild(document.createElement("div"));
+  incoming.lastElementChild.className = "modal-body";
+  incoming.querySelectorAll("[id]").forEach(node => node.removeAttribute("id"));
+  populateModalCard(incoming, TIMELINE_EVENTS[selected]);
+  incoming.style.setProperty("--incoming-left", `${modal.offsetLeft}px`);
+  incoming.style.setProperty("--incoming-top", `${modal.offsetTop}px`);
+  incoming.style.setProperty("--incoming-width", `${cardWidth}px`);
+  incoming.style.setProperty("--incoming-height", `${modal.offsetHeight}px`);
+  taskStage.appendChild(incoming);
   preview.style.visibility = "hidden";
-  switchFlight = flight;
+  switchIncoming = incoming;
   switchPreview = preview;
   switchPhase = "moving";
   const sequence = ++switchSequence;
 
-  // The visible slice of the neighboring card expands into the reading card.
-  const overlap = direction > 0
-    ? Math.max(0, Math.min(peekRect.width - 1, cardRect.right - peekRect.left))
-    : Math.max(0, Math.min(peekRect.width - 1, peekRect.right - cardRect.left));
-  const clipStart = direction > 0
-    ? `inset(0px 0px 0px ${overlap}px round 24px)`
-    : `inset(0px ${overlap}px 0px 0px round 24px)`;
-  const destination = `translate3d(${cardRect.left - stageOffset - peekRect.left}px, ${cardRect.top - peekRect.top}px, 0) scale(${cardRect.width / peekRect.width}, ${cardRect.height / peekRect.height})`;
-  const flightAnimation = flight.animate([
-    { transform: "translate3d(0,0,0) scale(1)", clipPath: clipStart, opacity: 1, offset: 0 },
-    { transform: destination, clipPath: "inset(0px 0px 0px 0px round 24px)", opacity: 1, offset: .72 },
-    { transform: destination, clipPath: "inset(0px 0px 0px 0px round 24px)", opacity: 0, offset: 1 }
-  ], { duration: 420, easing: "cubic-bezier(.22,.75,.2,1)", fill: "forwards" });
-  const flightContent = [...flight.children].map(child => child.animate([
-    { opacity: 1, offset: 0 }, { opacity: 0, offset: .65 }, { opacity: 0, offset: 1 }
-  ], { duration: 420, fill: "forwards" }));
-  const travel = Math.min(cardRect.width * .32, 280);
+  const incomingAnimation = incoming.animate([
+    { opacity: .76, transform: `translate3d(${direction * travel}px,0,0) scale(.94)` },
+    { opacity: 1, transform: "translate3d(0,0,0) scale(1)" }
+  ], { duration: 520, easing: "cubic-bezier(.22,.82,.18,1)", fill: "forwards" });
   const outgoing = modal.animate([
     { opacity: 1, transform: "translate3d(0,0,0) scale(1)" },
-    { opacity: 0, transform: `translate3d(${-direction * travel}px,0,0) scale(.88)` }
-  ], { duration: 225, easing: "cubic-bezier(.35,0,.7,.3)", fill: "forwards" });
-  switchAnimations = [flightAnimation, ...flightContent, outgoing];
+    { opacity: .88, transform: `translate3d(${-direction * Math.min(cardWidth * .12, 105)}px,0,0) scale(.98)`, offset: .4 },
+    { opacity: 0, transform: `translate3d(${-direction * Math.min(cardWidth * .32, 280)}px,0,0) scale(.92)` }
+  ], { duration: 430, easing: "cubic-bezier(.4,0,.2,1)", fill: "forwards" });
+  switchAnimations = [incomingAnimation, outgoing];
 
-  outgoing.finished.then(() => {
+  Promise.all([incomingAnimation.finished, outgoing.finished]).then(() => {
     if (sequence !== switchSequence) return;
-    modal.style.opacity = "0";
+    const oldModal = modal;
+    oldModal.remove();
     outgoing.cancel();
-    openModal(TIMELINE_EVENTS[selected]);
-    const incoming = modal.animate([
-      { opacity: 0, transform: `translate3d(${direction * 38}px,0,0) scale(.97)` },
-      { opacity: 1, transform: "translate3d(0,0,0) scale(1)" }
-    ], { duration: 205, easing: "cubic-bezier(.2,.8,.2,1)", fill: "forwards" });
-    switchAnimations.push(incoming);
-    Promise.all([incoming.finished, flightAnimation.finished]).then(() => {
-      if (sequence !== switchSequence) return;
-      incoming.cancel();
-      modal.style.opacity = "";
-      flightContent.forEach(animation => animation.cancel());
-      flightAnimation.cancel();
-      flight.remove();
-      preview.style.visibility = "";
-      switchFlight = null;
-      switchPreview = null;
-      switchAnimations = [];
-      switchPhase = "idle";
-      advanceQueuedUpdate();
-    }).catch(() => {});
+    incomingAnimation.cancel();
+    incoming.classList.remove("task-incoming");
+    incoming.removeAttribute("aria-hidden");
+    incoming.style.removeProperty("--incoming-left");
+    incoming.style.removeProperty("--incoming-top");
+    incoming.style.removeProperty("--incoming-width");
+    incoming.style.removeProperty("--incoming-height");
+    incoming.id = "modal";
+    incoming.setAttribute("role", "dialog");
+    incoming.setAttribute("aria-modal", "true");
+    incoming.setAttribute("aria-labelledby", "modalTitle");
+    [[".modal-date", "modalDate"], [".modal-badge", "modalBadge"],
+      [".modal-title", "modalTitle"], [".modal-art", "modalArt"],
+      [".modal-body", "modalBody"]].forEach(([selector, id]) => {
+      incoming.querySelector(selector).id = id;
+    });
+    taskStage.insertBefore(incoming, nextPreview);
+    modal = incoming;
+    activeEventIndex = selected;
+    updateTaskNavigation();
+    preview.style.visibility = "";
+    switchIncoming = null;
+    switchPreview = null;
+    switchAnimations = [];
+    switchPhase = "idle";
+    advanceQueuedUpdate();
   }).catch(() => {});
 }
 
-function openModal(ev, originEl) {
-  const isAlreadyOpen = overlay.classList.contains("open");
-  clearTimeout(closeTimer);
-  if (!isAlreadyOpen) lastModalTrigger = originEl || document.activeElement;
-  overlay.classList.remove("closing");
-  if (!isAlreadyOpen) setModalOrigin(originEl);
-  activeEventIndex = TIMELINE_EVENTS.indexOf(ev);
-  updateTaskNavigation();
-  modalDate.textContent = formatDate(ev.date);
-  modalBadge.textContent = ev.type === "community" ? "Community Milestone" : (ev.type === "incident" ? "Incident" : (ev.type === "exploit" ? "Exploit" : (ev.era ? "Major Update" : "Update")));
-  modalBadge.className = "modal-badge" + (ev.type === "community" ? " community" : (ev.type === "incident" ? " incident" : (ev.type === "exploit" ? " exploit" : (ev.era ? "" : " update"))));
-  modalTitle.textContent = ev.title;
-  modalArt.onerror = () => {
-    modalArt.onerror = null;
-    modalArt.src = DEFAULT_GAME_ART;
+function populateModalCard(card, ev) {
+  const date = card.querySelector(".modal-date");
+  const badge = card.querySelector(".modal-badge");
+  const title = card.querySelector(".modal-title");
+  const art = card.querySelector(".modal-art");
+  const body = card.querySelector(".modal-body");
+  date.textContent = formatDate(ev.date);
+  badge.textContent = ev.type === "community" ? "Community Milestone" : (ev.type === "incident" ? "Incident" : (ev.type === "exploit" ? "Exploit" : (ev.era ? "Major Update" : "Update")));
+  badge.className = "modal-badge" + (ev.type === "community" ? " community" : (ev.type === "incident" ? " incident" : (ev.type === "exploit" ? " exploit" : (ev.era ? "" : " update"))));
+  title.textContent = ev.title;
+  art.onerror = () => {
+    art.onerror = null;
+    art.src = DEFAULT_GAME_ART;
   };
-  modalArt.src = getEventArtwork(ev);
-  modalArt.alt = `${ev.title} update artwork`;
+  art.src = getEventArtwork(ev);
+  art.alt = `${ev.title} update artwork`;
 
   let html = patchHtmlCache.get(ev);
   if (html === undefined) {
@@ -619,20 +620,31 @@ function openModal(ev, originEl) {
   const sourceLinks = [{ href: ev.sourceHref, label: sourceLabel }, ...(ev.extraSources || [])];
   html += `<p class="source-note">${sourceLinks.length > 1 ? "Sources" : "Source"}: ${sourceLinks.map(src => `<a href="${src.href}" target="_blank" rel="noopener noreferrer">${escapeHtml(src.label)}</a>`).join(" · ")}</p>`;
 
-  modalBody.innerHTML = html;
-  overlay.classList.add("open");
-  document.body.style.overflow = "hidden";
-  modal.scrollTop = 0;
+  body.innerHTML = html;
 
-  const toggle = document.getElementById("patchToggle");
+  const toggle = body.querySelector("#patchToggle");
   if (toggle) {
     toggle.dataset.label = toggle.textContent;
     toggle.addEventListener("click", () => {
-      const stack = document.getElementById("patchStack");
+      const stack = body.querySelector("#patchStack");
       const expanded = stack.classList.toggle("expanded");
       toggle.textContent = expanded ? "Show less" : toggle.dataset.label;
     });
   }
+}
+
+function openModal(ev, originEl) {
+  const isAlreadyOpen = overlay.classList.contains("open");
+  clearTimeout(closeTimer);
+  if (!isAlreadyOpen) lastModalTrigger = originEl || document.activeElement;
+  overlay.classList.remove("closing");
+  if (!isAlreadyOpen) setModalOrigin(originEl);
+  activeEventIndex = TIMELINE_EVENTS.indexOf(ev);
+  updateTaskNavigation();
+  populateModalCard(modal, ev);
+  overlay.classList.add("open");
+  document.body.style.overflow = "hidden";
+  modal.scrollTop = 0;
   if (!isAlreadyOpen) closeBtn.focus({ preventScroll: true });
 }
 
