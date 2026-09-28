@@ -477,14 +477,21 @@ function updateTaskNavigation() {
 }
 
 let queuedEventIndex = null;
-let switchAnimation = null;
+let switchAnimations = [];
+let switchFlight = null;
+let switchPreview = null;
 let switchPhase = "idle";
 let switchSequence = 0;
 
 function cancelUpdateSwitch() {
   switchSequence++;
-  switchAnimation?.cancel();
-  switchAnimation = null;
+  switchAnimations.forEach(animation => animation.cancel());
+  switchAnimations = [];
+  switchFlight?.remove();
+  switchFlight = null;
+  if (switchPreview) switchPreview.style.visibility = "";
+  switchPreview = null;
+  modal.style.opacity = "";
   switchPhase = "idle";
   queuedEventIndex = null;
 }
@@ -502,41 +509,84 @@ function browseUpdate(direction) {
     return;
   }
 
-  // Rapid presses update the destination without restarting the outgoing card.
-  if (switchPhase === "out") return;
+  // Queue rapid presses as individual chapters, preserving the visible path.
+  if (switchPhase === "idle") advanceQueuedUpdate();
+}
 
-  const current = getComputedStyle(modal);
-  const fromOpacity = current.opacity;
-  const fromTransform = current.transform === "none" ? "translate3d(0,0,0) scale(1)" : current.transform;
-  switchAnimation?.cancel();
+function advanceQueuedUpdate() {
+  if (queuedEventIndex === null || queuedEventIndex === activeEventIndex) {
+    queuedEventIndex = null;
+    return;
+  }
+  const direction = Math.sign(queuedEventIndex - activeEventIndex);
+  const selected = activeEventIndex + direction;
+  const preview = direction > 0 ? nextPreview : prevPreview;
+  const peekRect = preview.getBoundingClientRect();
+  const cardRect = modal.getBoundingClientRect();
+  const stageMatrix = getComputedStyle(taskStage).transform;
+  const stageOffset = stageMatrix === "none" ? 0 : new DOMMatrixReadOnly(stageMatrix).m41;
+  const flight = document.createElement("div");
+  flight.className = "task-flight";
+  flight.setAttribute("aria-hidden", "true");
+  flight.innerHTML = preview.innerHTML;
+  flight.querySelector("img").loading = "eager";
+  flight.style.left = `${peekRect.left}px`;
+  flight.style.top = `${peekRect.top}px`;
+  flight.style.width = `${peekRect.width}px`;
+  flight.style.height = `${peekRect.height}px`;
+  overlay.appendChild(flight);
+  preview.style.visibility = "hidden";
+  switchFlight = flight;
+  switchPreview = preview;
+  switchPhase = "moving";
   const sequence = ++switchSequence;
-  switchPhase = "out";
-  const offset = direction > 0 ? -32 : 32;
+
+  // The visible slice of the neighboring card expands into the reading card.
+  const overlap = direction > 0
+    ? Math.max(0, Math.min(peekRect.width - 1, cardRect.right - peekRect.left))
+    : Math.max(0, Math.min(peekRect.width - 1, peekRect.right - cardRect.left));
+  const clipStart = direction > 0
+    ? `inset(0px 0px 0px ${overlap}px round 24px)`
+    : `inset(0px ${overlap}px 0px 0px round 24px)`;
+  const destination = `translate3d(${cardRect.left - stageOffset - peekRect.left}px, ${cardRect.top - peekRect.top}px, 0) scale(${cardRect.width / peekRect.width}, ${cardRect.height / peekRect.height})`;
+  const flightAnimation = flight.animate([
+    { transform: "translate3d(0,0,0) scale(1)", clipPath: clipStart, opacity: 1, offset: 0 },
+    { transform: destination, clipPath: "inset(0px 0px 0px 0px round 24px)", opacity: 1, offset: .72 },
+    { transform: destination, clipPath: "inset(0px 0px 0px 0px round 24px)", opacity: 0, offset: 1 }
+  ], { duration: 420, easing: "cubic-bezier(.22,.75,.2,1)", fill: "forwards" });
+  const flightContent = [...flight.children].map(child => child.animate([
+    { opacity: 1, offset: 0 }, { opacity: 0, offset: .65 }, { opacity: 0, offset: 1 }
+  ], { duration: 420, fill: "forwards" }));
+  const travel = Math.min(cardRect.width * .32, 280);
   const outgoing = modal.animate([
-    { opacity: fromOpacity, transform: fromTransform },
-    { opacity: .35, transform: `translate3d(${offset}px,0,0) scale(.985)` }
-  ], { duration: 135, easing: "cubic-bezier(.4,0,1,1)", fill: "forwards" });
-  switchAnimation = outgoing;
+    { opacity: 1, transform: "translate3d(0,0,0) scale(1)" },
+    { opacity: 0, transform: `translate3d(${-direction * travel}px,0,0) scale(.88)` }
+  ], { duration: 225, easing: "cubic-bezier(.35,0,.7,.3)", fill: "forwards" });
+  switchAnimations = [flightAnimation, ...flightContent, outgoing];
 
   outgoing.finished.then(() => {
-    if (sequence !== switchSequence || queuedEventIndex === null) return;
-    const selected = queuedEventIndex;
-    const arrivalDirection = Math.sign(selected - activeEventIndex) || direction;
-    queuedEventIndex = null;
-    openModal(TIMELINE_EVENTS[selected]);
+    if (sequence !== switchSequence) return;
+    modal.style.opacity = "0";
     outgoing.cancel();
-
+    openModal(TIMELINE_EVENTS[selected]);
     const incoming = modal.animate([
-      { opacity: .35, transform: `translate3d(${arrivalDirection * 28}px,0,0) scale(.985)` },
+      { opacity: 0, transform: `translate3d(${direction * 38}px,0,0) scale(.97)` },
       { opacity: 1, transform: "translate3d(0,0,0) scale(1)" }
-    ], { duration: 280, easing: "cubic-bezier(.16,1,.3,1)", fill: "forwards" });
-    switchAnimation = incoming;
-    switchPhase = "in";
-    incoming.finished.then(() => {
+    ], { duration: 205, easing: "cubic-bezier(.2,.8,.2,1)", fill: "forwards" });
+    switchAnimations.push(incoming);
+    Promise.all([incoming.finished, flightAnimation.finished]).then(() => {
       if (sequence !== switchSequence) return;
       incoming.cancel();
-      switchAnimation = null;
+      modal.style.opacity = "";
+      flightContent.forEach(animation => animation.cancel());
+      flightAnimation.cancel();
+      flight.remove();
+      preview.style.visibility = "";
+      switchFlight = null;
+      switchPreview = null;
+      switchAnimations = [];
       switchPhase = "idle";
+      advanceQueuedUpdate();
     }).catch(() => {});
   }).catch(() => {});
 }

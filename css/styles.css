@@ -1749,6 +1749,34 @@ footer {
 .task-peek::after { background: #cdbf9d; box-shadow: 0 17px 0 #d9cba9, 0 34px 0 #e2d5b8; }
 .task-controls { color: #f6e6c6; }
 
+/* A lightweight cover flies from the visible side card into the reader. */
+.task-flight {
+  position: fixed;
+  z-index: 80;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  overflow: hidden;
+  padding: 20px;
+  border: 1px solid #c9b78d;
+  border-radius: 25px;
+  background: #e8ddc1;
+  box-shadow: 0 22px 55px rgba(1,19,13,.35);
+  color: var(--ink);
+  pointer-events: none;
+  transform-origin: top left;
+}
+.task-flight::after {
+  content: "";
+  width: 72%;
+  height: 6px;
+  margin-top: 26px;
+  border-radius: 99px;
+  background: #cdbf9d;
+  box-shadow: 0 17px 0 #d9cba9, 0 34px 0 #e2d5b8;
+}
+.task-flight .task-peek-date { color: #687568; }
+
 @media (max-width: 760px) {
   body { padding: calc(12px + env(safe-area-inset-top)) 12px calc(48px + env(safe-area-inset-bottom)); }
   header { grid-template-columns: 1fr; gap: 0; padding: 10px; min-height: 0; margin-bottom: 29px; }
@@ -1775,6 +1803,7 @@ footer {
   .task-stage .modal-body { padding: 16px 18px 26px; }
   .task-stage .modal-title { font-size: clamp(21px, 5.5vw, 29px); }
   .task-peek { padding: 14px; }
+  .task-flight { padding: 14px; }
 }
 @media (max-width: 430px) {
   .timeline-intro { display: block; }
