@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#17342c">
 <meta name="description" content="An interactive historical archive of Bee Swarm Simulator updates, milestones, incidents and community events.">
 <title>Bee Swarm Simulator History Archive</title>
-<link rel="stylesheet" href="./css/styles.css?v=deck-motion-1">
+<link rel="stylesheet" href="./css/styles.css?v=soft-peeks-1">
 </head>
 <body>
 <div class="wrap">
@@ -68,7 +68,7 @@
 
     <div class="task-stage" id="taskStage">
       <button class="task-peek task-peek--prev" id="prevPreview" type="button" aria-label="Previous update">
-        <img class="task-peek-art" alt="" loading="lazy">
+        <img class="task-peek-art" alt="" loading="eager" decoding="async">
         <span class="task-peek-date"></span>
         <strong class="task-peek-title"></strong>
       </button>
@@ -92,7 +92,7 @@
       </div>
 
       <button class="task-peek task-peek--next" id="nextPreview" type="button" aria-label="Next update">
-        <img class="task-peek-art" alt="" loading="lazy">
+        <img class="task-peek-art" alt="" loading="eager" decoding="async">
         <span class="task-peek-date"></span>
         <strong class="task-peek-title"></strong>
       </button>
@@ -106,6 +106,6 @@
   </div>
 </div>
 
-<script type="module" src="./js/app.js?v=peek-fade-1"></script>
+<script type="module" src="./js/app.js?v=soft-peeks-1"></script>
 </body>
 </html>

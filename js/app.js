@@ -459,7 +459,30 @@ function renderTaskPreview(button, index, direction) {
   button.disabled = !ev;
   if (!ev) return;
   button.setAttribute("aria-label", `${direction}: ${ev.title}, ${formatDate(ev.date)}`);
-  button.querySelector(".task-peek-art").src = getEventArtwork(ev);
+  const image = button.querySelector(".task-peek-art");
+  const artwork = getEventArtwork(ev);
+  if (image.dataset.artwork !== artwork) {
+    image.dataset.artwork = artwork;
+    image.classList.add("is-loading");
+    const loadArtwork = (src) => {
+      image.src = src;
+      const reveal = () => {
+        if (image.getAttribute("src") !== src) return;
+        if (!image.naturalWidth && src !== DEFAULT_GAME_ART) {
+          loadArtwork(DEFAULT_GAME_ART);
+          return;
+        }
+        image.classList.remove("is-loading");
+      };
+      if (image.decode) image.decode().then(reveal, reveal);
+      else if (image.complete) reveal();
+      else {
+        image.addEventListener("load", reveal, { once: true });
+        image.addEventListener("error", reveal, { once: true });
+      }
+    };
+    loadArtwork(artwork);
+  }
   button.querySelector(".task-peek-date").textContent = formatDate(ev.date);
   button.querySelector(".task-peek-title").textContent = ev.title;
 }
@@ -493,8 +516,8 @@ function revealTaskPreviews(initial = false) {
     const targetOpacity = getComputedStyle(button).opacity;
     const animation = button.animate(
       [{ opacity: 0 }, { opacity: targetOpacity }],
-      { duration: 340, delay: (initial ? 120 : 25) + index * 55,
-        easing: "cubic-bezier(.2,.8,.2,1)", fill: "backwards" }
+      { duration: 520, delay: (initial ? 150 : 60) + index * 70,
+        easing: "ease-in-out", fill: "backwards" }
     );
     previewAnimations.push(animation);
   });
